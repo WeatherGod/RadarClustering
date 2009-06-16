@@ -9,7 +9,7 @@ from LoadRastRadar import *		# for LoadRastRadar()
 
 from RadarPlotUtils import *		# for MakeReflectPPI(), TightBounds()
 
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 import pylab
 import numpy
 
@@ -54,19 +54,22 @@ def ConsistentDomain(fileList) :
 parser = OptionParser()
 parser.add_option("-r", "--run", dest="runName",
 		  help="Generate cluster images for RUNNAME", metavar="RUNNAME")
+parser.add_option("-p", "--path", dest="pathName",
+		  help="PATHNAME for cluster files and radar data", metavar="RUNNAME", default='.')
+
 
 (options, args) = parser.parse_args()
 
 if (options.runName == None) :
     parser.error("Missing RUNNAME")
 
-runName = options.runName
-
-print "The runName:", runName
 
 
-fileList = glob.glob(os.sep.join(['..', 'ClustInfo', runName, '*.nc']))
-if (len(fileList) == 0) : print "WARNING: No files found for run '" + runName + "'!"
+print "The runName:", options.runName
+
+
+fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', options.runName, '*.nc']))
+if (len(fileList) == 0) : print "WARNING: No files found for run '" + options.runName + "'!"
 fileList.sort()
 
 
@@ -98,7 +101,7 @@ for filename in fileList :
     pylab.hold(True)
     
     (clustParams, clusters) = LoadClustFile(filename)
-    rastData = LoadRastRadar(os.sep.join(['..', clustParams['dataSource']]))
+    rastData = LoadRastRadar(os.sep.join([options.pathName, clustParams['dataSource']]))
 
     MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'], 
 		   rastData['title'], alpha=0.85, drawer=map)
@@ -118,7 +121,7 @@ for filename in fileList :
 	       drawer=map)
     pylab.hold(False)
 
-    outfile = os.sep.join(['..', 'PPI', runName, nameStem + '_clust.png'])
+    outfile = os.sep.join(['PPI', options.runName, nameStem + '_clust.png'])
     pylab.savefig(outfile)
     pylab.clf()
 

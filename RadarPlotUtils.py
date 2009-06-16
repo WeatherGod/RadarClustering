@@ -3,7 +3,7 @@ import numpy		# using .ma for Masked Arrays, also for .isnan()
 import pylab		# for Matlab-like features
 import ctables		# for color table for reflectivities
 import os		# for various filepath-related tasks
-from matplotlib.toolkits.basemap import Basemap   # for .drawstates(), .readshapefile(), 
+from mpl_toolkits.basemap import Basemap   # for .drawstates(), .readshapefile(), 
 						  # .drawrivers(), .drawcountries()
 
 def MakeReflectPPI(vals, lats, lons, titleStr, **kwargs) :   
