@@ -14,12 +14,12 @@ import pylab
 import numpy
 
 import glob		# for filename globbing
-import os		# for os.sep.join(), os.path.split(), os.path.splitext()
+import os		# for os.sep.join(), os.path.split(), os.path.splitext(), os.mkdir()
 
 
 
 
-def ConsistentDomain(fileList) :
+def ConsistentDomain(fileList, filepath) :
     minLat = None
     minLon = None
     maxLat = None
@@ -27,7 +27,7 @@ def ConsistentDomain(fileList) :
 
     for filename in fileList :
         dataSource = GetClustDataSource(filename)
-        rastData = LoadRastRadar(os.sep.join(['..', dataSource]))
+        rastData = LoadRastRadar(os.sep.join([filepath, dataSource]))
         (lons, lats) = pylab.meshgrid(rastData['lons'], rastData['lats'])
         bounds = TightBounds(lons, lats, pylab.squeeze(rastData['vals']))
 
@@ -55,7 +55,7 @@ parser = OptionParser()
 parser.add_option("-r", "--run", dest="runName",
 		  help="Generate cluster images for RUNNAME", metavar="RUNNAME")
 parser.add_option("-p", "--path", dest="pathName",
-		  help="PATHNAME for cluster files and radar data", metavar="RUNNAME", default='.')
+		  help="PATHNAME for cluster files and radar data", metavar="PATHNAME", default='.')
 
 
 (options, args) = parser.parse_args()
@@ -121,6 +121,7 @@ for filename in fileList :
 	       drawer=map)
     pylab.hold(False)
 
+    os.mkdir(os.sep.join(['PPI', options.runName]))
     outfile = os.sep.join(['PPI', options.runName, nameStem + '_clust.png'])
     pylab.savefig(outfile)
     pylab.clf()

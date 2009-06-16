@@ -1,0 +1,797 @@
+Identification_Information:
+  Citation:
+    Citation_Information:
+      Originator: 
+        Government of Canada, Natural Resources Canada, Canada Centre for Remote 
+        Sensing, The Atlas of Canada
+      Originator: Instituto Nacional de Estadística Geografía e Informática 
+      Originator: U.S. Geological Survey
+      Publication_Date: 200608
+      Title: North American Atlas - Roads
+      Geospatial_Data_Presentation_Form: Vector digital data  
+      Publication_Information:
+        Publication_Place: Ottawa, Ontario, Canada
+        Publisher: Government of Canada
+      Online_Linkage:
+        http://geogratis.gc.ca/download/frameworkdata/North_America_Atlas10M/roads/
+      Publication_Information:
+        Publication_Place: Aguascalientes, Aguascalientes, Mexico
+        Publisher: 
+          Instituto Nacional de Estadística, Geografía e Informática (INEGI)
+      Online_Linkage: http://antares.inegi.gob.mx/atlas_norteamerica/
+      Publication_Information:
+        Publication_Place: Reston, Virginia, USA
+        Publisher: U.S. Geological Survey
+      Online_Linkage: http://nationalatlas.gov/atlasftp-na.html
+
+  Description:
+    Abstract:
+      A joint venture involving the National Atlas programs in Canada (Natural 
+      Resources Canada), Mexico (Instituto Nacional de Estadística Geografía e 
+      Informática), and the United States (U.S. Geological Survey), as well as 
+      the North American Commission for Environmental Co-operation, has led to 
+      the release (June 2004) of several new products: an updated paper map of 
+      North America, and its associated geospatial data sets and their metadata.  
+      These data sets are available online from each of the partner countries 
+      both for download. This data has been revised and re-released in 2006.
+
+      The North American Atlas data are standardized geospatial data sets at 
+      1:10,000,000 scale.  A variety of basic data layers (e.g. roads, 
+      railroads, populated places, political boundaries, hydrography, 
+      bathymetry, sea ice and glaciers) have been integrated so that their 
+      relative positions are correct.  This collection of data sets forms a base 
+      with which other North American thematic data may be integrated.  Any data 
+      outside of Canada, Mexico, and the United States of America included in 
+      the North American Atlas data sets is strictly to complete the context of 
+      the data.
+
+      The North American Atlas - Roads data set shows the roads of North America 
+      at 1:10,000,000 scale.  The roads included in this data set are either 
+      those that connect major centres of population or selected frontier roads.  
+      Roads under construction are not shown.  There are three road classes: 
+      Major roads, which are divided, multi-lane, limited access highways; 
+      Secondary roads, which are all roads that do not meet the definition of 
+      major roads; and Ferries, which are major ferry links which run either 
+      year round or through periods when ice conditions permit.
+
+      This data set was produced using digital files supplied by Natural 
+      Resources Canada, Instituto Nacional de Estadística Geografía e 
+      Informática, and the U.S. Geological Survey.
+
+    Purpose:
+      The North American Atlas data are intended for geographic display and 
+      analysis at the national and continental level.  These data should be 
+      displayed and analyzed at scales appropriate for 1:10,000,000-scale data.  
+      No responsibility is assumed by Natural Resources Canada, Instituto 
+      Nacional de Estadística Geografía e Informática, or the U.S. Geological 
+      Survey in the use of these data. 
+    
+    Supplemental_Information:
+      The Commission for Environmental Cooperation (CEC) is an international
+      organization created by Canada, Mexico, and the United States of America 
+      under the North American Agreement on Environmental Cooperation (NAAEC).  
+      The CEC was established to address regional environmental concerns, help 
+      prevent potential trade and environmental conflicts, and to promote the 
+      effective enforcement of environmental law.  The Agreement complements the
+      environmental provisions of the North American Free Trade Agreement 
+      (NAFTA).  Further information on the CEC is available from 
+      http://www.cec.org/ or from 
+      >Commission for Environmental Cooperation
+      >393, rue St-Jacques Ouest
+      >Bureau 200
+      >Montréal (Québec)
+      >H2Y 1N9 Canada
+      >
+      >Telephone: 514 350 4300
+      >Facsimile: 514 350 4314
+      >Electronic mail: info@ccemtl.org
+      >
+      All North American Atlas data sets are available in three data formats: 
+      Arc/INFO Export format (e00), ArcView Shapefile, Geography Markup Language 
+      (GML) and Spatial Data Transfer Standard (SDTS). 
+
+      Although these data are distributed in geographic coordinates, the North 
+      American Atlas Map uses a Lambert Azimuthal Equal Area projection.  The 
+      following parameters were used for the map:
+      >Longitude_of_Projection_Center: -100.00 
+      >Latitude_of_Projection_Center: 45.00 
+      >False_Easting (metres): 0.0 
+      >False_Northing (metres): 0.0 
+      >Semi-major_Axis: 6370997.0 
+      >Denominator_of_Flattening_Ratio: 1.0
+      >Ellipsoid_Name: Sphere 
+      >Units: metres
+
+  Time_Period_of_Content:
+    Time_Period_Information:
+      Single_Date/Time:
+        Calendar_Date: 200608
+    Currentness_Reference: Publication date
+
+  Status:
+    Progress: Complete
+    Maintenance_and_Update_Frequency: Irregular 
+
+  Spatial_Domain:
+    Bounding_Coordinates:
+      West_Bounding_Coordinate: 152.0 
+      East_Bounding_Coordinate: 4.0
+      North_Bounding_Coordinate: 90.0
+      South_Bounding_Coordinate: -5.0
+
+  Keywords:
+    Theme:
+      Theme_Keyword_Thesaurus: None
+      Theme_Keyword: Infrastructure
+      Theme_Keyword: Transportation
+      Theme_Keyword: Roads
+      Theme_Keyword: Highways
+      Theme_Keyword: Major roads
+      Theme_Keyword: Ferries
+
+    Place:
+      Place_Keyword_Thesaurus: None
+      Place_Keyword: Mid-latitude
+      Place_Keyword: Western Hemisphere
+      Place_Keyword: Northern Hemisphere
+      Place_Keyword: North America
+      Place_Keyword: NAFTA
+      Place_Keyword: North America Free Trade Agreement
+      Place_Keyword: Canada
+      Place_Keyword: Mexico
+      Place_Keyword: United States
+
+  Access_Constraints: None
+  Use_Constraints: 
+    All data for Canada and other areas outside of Mexico and the United 
+    States of America are covered by the Geogratis User Agreement for Digital 
+    Data; see http://geogratis.gc.ca/e_license.html.
+
+    No use constraints are applied to data for Mexico and the United States of 
+    America.  Acknowledgment of the North American Atlas, Instituto Nacional de 
+    Estadística Geografía e Informática, Natural Resources Canada, and (or) the 
+    U.S. Geological Survey would be appreciated in products derived from these 
+    data.
+
+  Point_of_Contact:
+    Contact_Information:
+      Contact_Organization_Primary:
+        Contact_Organization: 
+          Government of Canada, Natural Resources Canada, Canada Centre for 
+          Remote Sensing, The Atlas of Canada
+      Contact_Position: Atlas of Canada Client Services
+      Contact_Address:
+        Address_Type: Mailing address
+        Address: Room 650-615 Booth Street
+        City: Ottawa
+        State_or_Province: Ontario
+        Country: Canada
+        Postal_Code: K1A 0E9
+      Contact_Facsimile_Telephone: +01 613 947 2410
+      Contact_Electronic_Mail_Address: info@atlas.gc.ca
+  Point_of_Contact:
+    Contact_Information:
+      Contact_Person_Primary:
+        Contact_Person: Jorge Padilla Noriega
+        Contact_Organization: Dirección General de Geografía, INEGI
+      Contact_Address:
+        Address_Type: Mailing address
+        Address: Av Heroe de Nacozari Sur 2301
+        Address: Fracc Jardines del Parque
+        City: Aguascalientes
+        State_or_Province: Aguascalientes
+        Country: Mexico
+        Postal_Code: 20270
+      Contact_Voice_Telephone: 52 449 910 5349
+      Contact_Electronic_Mail_Address: jorge.padilla@inegi.gob.mx
+  Point_of_Contact:
+    Contact_Information:
+      Contact_Organization_Primary:
+        Contact_Organization: U.S. Geological Survey
+        Contact_Person: John Hutchinson
+      Contact_Address:
+        Address_Type: Mailing address
+        Address: USGS EROS Data Center
+        City: Sioux Falls		
+        State_or_Province: South Dakota
+        Country: USA
+        Postal_Code: 57198-0001
+      Contact_Voice_Telephone: 605 594 6049
+      Contact_Facsimile_Telephone: 605 594 6529
+      Contact_Electronic_Mail_Address: atlasmail@usgs.gov 
+
+Data_Quality_Information:
+  Attribute_Accuracy:
+    Attribute_Accuracy_Report: 
+      Where possible, attribute data were quality controlled by creating 
+      symbolized digital displays or hard copy plots, which were visually 
+      verified with digital or hard copy reference data.  Attribute data that 
+      could not be verified in such a manner were interactively queried to check 
+      for anomalies such as duplication of data in fields requiring unique 
+      values and incorrect feature coding.  Data for areas outside of Canada, 
+      Mexico, and the United States of America are only provided for context;
+      Natural Resources Canada, Instituto Nacional de Estadística Geografía e 
+      Informática, and the U.S. Geological Survey assume no responsibility 
+      for the completeness, accuracy, or presentation of this data.
+  Logical_Consistency_Report: 
+    A quality control of the linear road and ferry links data was done in order 
+    to ensure topological consistency within each country and across country 
+    boundaries.
+  Completeness_Report:
+    This data set includes roads and ferry links for all of North America as 
+    shown at 1:10,000,000 scale.  The data completeness reflects the content of 
+    the source data, the selection made by the cartographers, and the quality 
+    control of the content performed by each country.
+  Positional_Accuracy: 
+    Horizontal_Positional_Accuracy: 
+      Horizontal_Positional_Accuracy_Report: 
+        Positional accuracy varies throughout the data.  Positions are dependent 
+        on the accuracy of the source data and on the result of the 
+        generalization and integration processes.  Data for areas outside of 
+        Canada, Mexico, and the United States of America are only provided for 
+        context; Natural Resources Canada, Instituto Nacional de Estadística 
+        Geografía e Informática, and the U.S. Geological Survey assume no 
+        responsibility for the completeness, accuracy, or presentation of this 
+        data.
+
+  Lineage:
+    Source_Information: 
+      Source_Citation:
+        Citation_Information:
+          Originator: 
+            Government of Canada, Natural Resources Canada, Canada Centre for 
+            Remote Sensing, The Atlas of Canada 
+          Publication_Date: 2002
+          Title: 
+            1:6,000,000 National Atlas of Canada Reference Map Series - Roads
+          Geospatial_Data_Presentation_Form: Vector digital data     
+          Publication_Information:
+            Publication_Place: Ottawa, Ontario, Canada
+            Publisher: 
+              Government of Canada, Natural Resources Canada, Canada Centre for 
+              Remote Sensing, The Atlas of Canada
+      Source_Scale_Denominator: 6000000
+      Type_of_Source_Media: Online
+      Source_Time_Period_of_Content:
+        Time_Period_Information: 
+          Single_Date/Time:
+            Calendar_Date: 2002
+        Source_Currentness_Reference: Ground condition
+      Source_Citation_Abbreviation: 6M CA Roads
+      Source_Contribution: Spatial and attribute information
+
+    Source_Information: 
+      Source_Citation:
+        Citation_Information:
+          Originator: 
+            Government of Canada, Natural Resources Canada, Canada Centre for 
+            Remote Sensing, The Atlas of Canada 
+          Publication_Date: 2003
+          Title: National Scale Frameworks Road Network, Canada
+          Geospatial_Data_Presentation_Form: Vector digital data     
+          Publication_Information:
+            Publication_Place: Ottawa, Ontario, Canada
+            Publisher: 
+              Government of Canada, Natural Resources Canada, Canada Centre for 
+              Remote Sensing, The Atlas of Canada
+      Source_Scale_Denominator: 1000000
+      Type_of_Source_Media: Online
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Single_Date/Time:
+            Calendar_Date: 2003
+        Source_Currentness_Reference: Ground condition
+      Source_Citation_Abbreviation: CA Frameworks Road
+      Source_Contribution: Spatial information
+
+    Source_Information: 
+      Source_Citation:
+        Citation_Information:
+          Originator: 
+            Government of Canada, Natural Resources Canada, Canada Centre for 
+            Remote Sensing, The Atlas of Canada 
+          Publication_Date: 2000
+          Title: 
+            North America, National Atlas of Canada Reference Map Series - Roads
+          Geospatial_Data_Presentation_Form: Vector digital data     
+          Publication_Information:
+            Publication_Place: Ottawa, Ontario, Canada
+            Publisher: 
+              Government of Canada, Natural Resources Canada, Canada Centre for 
+              Remote Sensing, The Atlas of Canada
+      Source_Scale_Denominator: 10000000
+      Type_of_Source_Media: CD-ROM
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Single_Date/Time:
+            Calendar_Date: 2000
+        Source_Currentness_Reference: Ground condition
+      Source_Citation_Abbreviation: 10M North America
+      Source_Contribution: Spatial information
+
+    Source_Information: 
+      Source_Citation:
+        Citation_Information:
+          Originator: Instituto Nacional de Estadística Geografía e Informática
+          Publication_Date: 200407
+          Title: Conjunto de Datos Vectoriales Topográficos escala 1:4,000,000
+          Geospatial_Data_Presentation_Form: Vector digital data     
+          Publication_Information:
+            Publication_Place: Aguascalientes, Aguascalientes, Mexico
+            Publisher: 
+              Instituto Nacional de Estadística, Geografía e Informática (INEGI)      
+      Source_Scale_Denominator: 4000000
+      Type_of_Source_Media: CD-ROM 
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Range_of_Dates/Times:
+            Beginning_Date: 19930101
+            Ending_Date: 19970401
+        Source_Currentness_Reference: Ground condition
+      Source_Citation_Abbreviation: 4M Mexico
+      Source_Contribution: Spatial and attribute information
+
+    Source_Information: 
+      Source_Citation:
+        Citation_Information:
+          Originator: U.S. Geological Survey
+          Publication_Date: Unpublished material
+          Title: 1:5,000,000 General Reference Map - Roads
+          Geospatial_Data_Presentation_Form: Vector digital data     
+          Publication_Information:
+            Publication_Place: Reston, Virginia, USA
+            Publisher: U.S. Geological Survey
+      Source_Scale_Denominator: 5000000
+      Type_of_Source_Media: Internal file
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Single_Date/Time:
+            Calendar_Date: 1998
+        Source_Currentness_Reference: Date of data compilation
+      Source_Citation_Abbreviation: 5M USA Roads
+      Source_Contribution: Spatial and attribute information
+
+    Source_Information: 
+      Source_Citation:
+        Citation_Information:
+          Originator: Instituto Nacional de Estadística Geografía e Informática 
+          Originator: 
+            Government of Canada, Natural Resources Canada, Canada Centre for 
+            Remote Sensing, The Atlas of Canada
+          Originator: U.S. Geological Survey
+          Publication_Date: 200406
+          Title: North American Atlas – Hydrography
+          Geospatial_Data_Presentation_Form: Vector digital data     
+          Publication_Information:
+            Publication_Place: Ottawa, Ontario, Canada
+            Publisher: 
+              Government of Canada, Natural Resources Canada, Canada Centre for 
+              Remote Sensing, The Atlas of Canada
+          Publication_Information:
+            Publication_Place: Aguascalientes, Aguascalientes, Mexico
+            Publisher: 
+              Instituto Nacional de Estadística, Geografía e Informática 
+              (INEGI)
+          Publication_Information:
+            Publication_Place: Reston, Virginia, USA
+            Publisher: U.S. Geological Survey
+      Source_Scale_Denominator: 10000000
+      Type_of_Source_Media: Online
+      Source_Time_Period_of_Content:
+        Time_Period_Information: 
+          Single_Date/Time:
+            Calendar_Date: 2004
+        Source_Currentness_Reference: Publication date
+      Source_Citation_Abbreviation: NAA Hydro
+      Source_Contribution: Spatial information
+
+    Source_Information: 
+      Source_Citation:
+        Citation_Information:
+          Originator: Instituto Nacional de Estadística Geografía e Informática 
+          Originator: 
+            Government of Canada, Natural Resources Canada, Canada Centre for 
+            Remote Sensing, The Atlas of Canada
+          Originator: U.S. Geological Survey
+          Publication_Date: 200406
+          Title: North American Atlas – Populated Places
+          Geospatial_Data_Presentation_Form: Vector digital data     
+          Publication_Information:
+            Publication_Place: Ottawa, Ontario, Canada
+            Publisher: 
+              Government of Canada, Natural Resources Canada, Canada Centre for 
+              Remote Sensing, The Atlas of Canada
+          Publication_Information:
+            Publication_Place: Aguascalientes, Aguascalientes, Mexico
+            Publisher: 
+              Instituto Nacional de Estadística, Geografía e Informática 
+              (INEGI)
+          Publication_Information:
+            Publication_Place: Reston, Virginia, USA
+            Publisher: U.S. Geological Survey
+      Source_Scale_Denominator: 10000000
+      Type_of_Source_Media: Online
+      Source_Time_Period_of_Content:
+        Time_Period_Information: 
+          Single_Date/Time:
+            Calendar_Date: 2004
+        Source_Currentness_Reference: Publication date
+      Source_Citation_Abbreviation: NAA Places
+      Source_Contribution: Spatial information
+
+    Source_Information: 
+      Source_Citation:
+        Citation_Information:
+          Originator: U.S. Geological Survey 
+          Originator: Instituto Nacional de Estadística Geografía e Informática 
+          Originator: Government of Canada, Natural Resources Canada, Canada Centre for 
+            Remote Sensing, The Atlas of Canada 
+Publication_Date: 200608
+          Title: North Americia Atlas - Hydrography
+          Geospatial_Data_Presentation_Form: Vector digital data     
+          Publication_Information:
+            Publication_Place: Reston, Virginia, USA
+            Publisher: U.S. Geological Survey
+          Publication_Information:
+            Publication_Place: Ottawa, Ontario, Canada
+            Publisher:  Government of Canada, Natural Resources Canada, Canada Centre for 
+            Remote Sensing, The Atlas of Canada 
+          Publication_Information:
+            Publication_Place: Aguascalientes, Aguascalientes, Mexique
+            Publisher: 
+              Instituto Nacional de Estadística, Geografía e Informática 
+              (INEGI)
+Source_Scale_Denominator: 10,000,000
+      Type_of_Source_Media: Online
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Single_Date/Time:
+            Calendar_Date: 2006
+        Source_Currentness_Reference: Date of publication
+      Source_Citation_Abbreviation: NA_Hydro06
+      Source_Contribution: Spatial and attribute information
+
+    Source_Information: 
+      Source_Citation:
+        Citation_Information:
+          Originator: U.S. Geological Survey 
+          Originator: Instituto Nacional de Estadística Geografía e Informática 
+          Originator: Government of Canada, Natural Resources Canada, Canada Centre for 
+            Remote Sensing, The Atlas of Canada 
+Publication_Date: 200608
+          Title: North Americia Atlas - Political Boundaries
+          Geospatial_Data_Presentation_Form: Vector digital data     
+          Publication_Information:
+            Publication_Place: Reston, Virginia, USA
+            Publisher: U.S. Geological Survey
+          Publication_Information:
+            Publication_Place: Ottawa, Ontario, Canada
+            Publisher: Government of Canada, Natural Resources Canada, Canada Centre for 
+            Remote Sensing, The Atlas of Canada 
+          Publication_Information:
+            Publication_Place: Aguascalientes, Aguascalientes, Mexique
+            Publisher: 
+              Instituto Nacional de Estadística, Geografía e Informática 
+              (INEGI)
+Source_Scale_Denominator: 10,000,000
+      Type_of_Source_Media: Online
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Single_Date/Time:
+            Calendar_Date: 2006
+        Source_Currentness_Reference: Date of publication
+      Source_Citation_Abbreviation: NA_Boundary06
+      Source_Contribution: Spatial and attribute information
+
+    Process_Step:
+      Process_Description:
+        Linework from the 1:6,000,000 Atlas of Canada road network was 
+        generalized and fitted to the North American Atlas hydrography and 
+        populated places layers.  The 1:1,000,000 National Scale Frameworks Road 
+        Network, Canada was used as a supplement to check selection and 
+        position.  The attribute for the country was added to the data.
+      Source_Used_Citation_Abbreviation: 6M CA Roads
+      Source_Used_Citation_Abbreviation: CA Frameworks Road
+      Source_Used_Citation_Abbreviation: NAA Hydro
+      Source_Used_Citation_Abbreviation: NAA Places
+      Process_Date: 2003
+
+    Process_Step:
+      Process_Description:
+        Linework from the 1:5,000,000 United States General Reference Map was 
+        generalized and fitted to the North American Atlas hydrography and 
+        populated places layers.  The attribute for the country was added to the 
+        data.
+      Source_Used_Citation_Abbreviation: 5M USA Roads 
+      Source_Used_Citation_Abbreviation: NAA Hydro
+      Source_Used_Citation_Abbreviation: NAA Places
+      Process_Date: 2003
+
+    Process_Step:
+      Process_Description:
+        Linework from the 1:4,000,000 Topographical Dataset for Mexico was 
+        generalized and fitted to the North American Atlas hydrography and 
+        populated places layers.  The attribute for the country was added to the 
+        data.
+      Source_Used_Citation_Abbreviation: 4M Mexico
+      Source_Used_Citation_Abbreviation: NAA Hydro
+      Source_Used_Citation_Abbreviation: NAA Places
+      Process_Date: 2003
+
+    Process_Step:
+      Process_Description:
+        Roads for regions outside Canada, Mexico, and the United States of 
+        America were compiled from the 1:10,000,000 North America National Atlas 
+        of Canada Reference Map Series data set.  Linework was fitted to the 
+        North American Atlas hydrography and populated places layers.
+      Source_Used_Citation_Abbreviation: 10M North America
+      Source_Used_Citation_Abbreviation: NAA Hydro
+      Source_Used_Citation_Abbreviation: NAA Places
+      Process_Date: 2004
+
+    Process_Step:
+      Process_Description:
+        The files from the three countries were combined with the file for the 
+        regions outside Canada, Mexico, and the United States of America and the 
+        linework was cartographically adjusted along country boundaries to 
+        ensure correct connection of the road network.
+      Process_Date: 2004
+
+    Process_Step:
+      Process_Description:
+        Because the linework came from several different sources and scales, a 
+        final cartographic review was done to the full road network to ensure 
+        cartographic compatibility at 1:10,000,000 scale.  Each country then 
+        performed a final cartographic check to verify the selection and 
+        position of the linework.  The attributes were also verified.
+      Process_Date: 2004
+
+    Process_Step:
+      Process_Description:
+Roads that either followed or were off-set from hydro features (rivers and lakes) and boundary lines in the United States were adjusted to fit the new hydro or boundary positions. The quality control of the data was performed in order to check the attributes and geometry, and to make corrections before release.
+      Source_Citation_Abbreviation: NA_Hydro06
+      Source_Used_Citation_Abbreviation: NA_Boundary06
+         Process_Date: 2004, 2006
+
+Spatial_Data_Organization_Information:
+  Direct_Spatial_Reference_Method: Vector
+  Point_and_Vector_Object_Information: 
+    SDTS_Terms_Description:
+      SDTS_Point_and_Vector_Object_Type: Complete chain
+      Point_and_Vector_Object_Count: 3933
+
+Spatial_Reference_Information:
+  Horizontal_Coordinate_System_Definition:
+    Geographic: 
+      Latitude_Resolution: 0.000001 
+      Longitude_Resolution: 0.000001
+      Geographic_Coordinate_Units: Decimal degrees 
+    Geodetic_Model: 
+      Horizontal_Datum_Name: North American Datum of 1983 
+      Ellipsoid_Name: Geodetic Reference System 80
+      Semi-major_Axis: 6378137.000000
+      Denominator_of_Flattening_Ratio: 298.257222
+
+Entity_and_Attribute_Information:
+  Detailed_Description:
+    Entity_Type:
+      Entity_Type_Label: Roads
+      Entity_Type_Definition: An open way for the passage of vehicles.
+      Entity_Type_Definition_Source: North American Atlas GIS Group 
+    Attribute:
+      Attribute_Label: UIDENT
+      Attribute_Definition:
+        The unique identifier.  A unique number that is assigned to each feature 
+        in the North American Atlas data.  The last two digits of the identifier 
+        are a suffix indicating the map layer.
+      Attribute_Definition_Source: North American Atlas GIS Group
+      Attribute_Domain_Values:
+        Range_Domain:
+          Range_Domain_Minimum: 305
+          Range_Domain_Maximum: 393105
+    Attribute:
+      Attribute_Label: Type
+      Attribute_Definition: The road classification
+      Attribute_Definition_Source: North American Atlas GIS Group
+      Attribute_Domain_Values:
+        Enumerated_Domain:
+          Enumerated_Domain_Value: 1
+          Enumerated_Domain_Value_Definition: 
+            A major road, which is a divided, multi-lane, limited access 
+            highway connecting major population centres.
+          Enumerated_Domain_Value_Definition_Source: 
+            North American Atlas GIS Group
+        Enumerated_Domain:
+          Enumerated_Domain_Value: 2
+          Enumerated_Domain_Value_Definition: 
+            Secondary road, which is any road that does not meet the definition 
+            of a major road.
+          Enumerated_Domain_Value_Definition_Source: 
+            North American Atlas GIS Group
+        Enumerated_Domain:
+          Enumerated_Domain_Value: 3
+          Enumerated_Domain_Value_Definition: 
+            Ferry route, which is a major ferry link that runs either year round 
+            or through periods when ice conditions permit.  
+          Enumerated_Domain_Value_Definition_Source: 
+            North American Atlas GIS Group
+    Attribute:
+      Attribute_Label: Country
+      Attribute_Definition: The country in which the road exists.
+      Attribute_Definition_Source: North American Atlas GIS Group
+      Attribute_Domain_Values:
+        Enumerated_Domain:
+          Enumerated_Domain_Value: CAN
+          Enumerated_Domain_Value_Definition: The road is in Canada.
+          Enumerated_Domain_Value_Definition_Source: 
+            North American Atlas GIS Group
+        Enumerated_Domain:
+          Enumerated_Domain_Value: MEX
+          Enumerated_Domain_Value_Definition: The road is in Mexico.
+          Enumerated_Domain_Value_Definition_Source: 
+            North American Atlas GIS Group
+        Enumerated_Domain:
+          Enumerated_Domain_Value: USA
+          Enumerated_Domain_Value_Definition: 
+            The road is in the United States of America.
+          Enumerated_Domain_Value_Definition_Source: 
+            North American Atlas GIS Group
+        Enumerated_Domain:
+          Enumerated_Domain_Value: FN
+          Enumerated_Domain_Value_Definition: 
+            The road is outside of Canada, Mexico, and the United States of 
+            America.
+          Enumerated_Domain_Value_Definition_Source: 
+            North American Atlas GIS Group
+        Enumerated_Domain:
+          Enumerated_Domain_Value: CAN USA
+          Enumerated_Domain_Value_Definition: 
+            The ferry route is between Canada and the United States of America.
+          Enumerated_Domain_Value_Definition_Source: 
+            North American Atlas GIS Group
+
+Distribution_Information:
+  Distributor:
+    Contact_Information:
+      Contact_Organization_Primary:
+        Contact_Organization: 
+   Government of Canada, Natural Resources Canada, Earth Sciences Sector, Data 
+ Management and Dissemination Branch
+      Contact_Address:
+        Address_Type: Mailing address
+        Address: Room 650-615 Booth Street
+        City: Ottawa
+        State_or_Province: Ontario
+        Country: Canada
+        Postal_Code: K1A 0E9
+      Contact_Facsimile_Telephone: +01 613 947 2410
+      Contact_Electronic_Mail_Address: info@GeoGratis.gc.ca
+Distribution_Information:
+  Distributor:
+    Contact_Information:
+      Contact_Organization_Primary:
+        Contact_Organization: INEGI
+        Contact_Person: Jose Luis Ornelas de Anda
+      Contact_Address:
+        Address_Type: Mailing address
+        Address: Avenida Héroe de Nacozari Sur 2301
+        Address: Fraccionamiento Jardines del Parque
+        City: Aguascalientes
+        State_or_Province: Aguascalientes
+        Country: Mexico
+        Postal_Code: 20270
+      Contact_Voice_Telephone: 52 449 910 5300 ext 5856
+      Contact_Electronic_Mail_Address: jose.ornelas@inegi.gob.mx
+Distribution_Information:
+  Distributor: 
+    Contact_Information:
+      Contact_Organization_Primary:
+        Contact_Organization: EROS Data Center, U.S. Geological Survey
+      Contact_Address:
+        Address_Type: Mailing address
+        Address: 47914 252nd Street
+        City: Sioux Falls
+        State_or_Province: SD
+        Country: USA
+        Postal_Code: 57198-0001
+      Contact_Voice_Telephone: 800 252 4547
+      Contact_Voice_Telephone: 605 594 6151
+      Contact_TDD/TTY_Telephone: 605 594 6933
+      Contact_Facsimile_Telephone: 605 594 6589
+      Contact_Electronic_Mail_Address: custserv@usgs.gov 
+
+  Distribution_Liability: 
+    Although these data have been processed successfully on computer systems at 
+    Natural Resources Canada, Instituto Nacional de Estadística Geografía e 
+    Informática, and the U.S. Geological Survey, no warranty expressed or 
+    implied is made by these agencies regarding the utility of the data on any 
+    other system, nor shall the act of distribution constitute any such 
+    warranty.  No responsibility is assumed by these agencies in the use of 
+    these data.  
+  Standard_Order_Process:
+    Digital_Form:
+      Digital_Transfer_Information:
+        Format_Name: ARCE
+      Digital_Transfer_Option:
+        Online_Option:
+          Computer_Contact_Information:
+            Network_Address:
+              Network_Resource_Name: 
+                http://geogratis.gc.ca/download/frameworkdata/North_America_Atlas10M/roads/
+              Network_Resource_Name: http://antares.inegi.gob.mx/atlas_norteamerica/
+              Network_Resource_Name: http://nationalatlas.gov/atlasftp-na.html
+    Digital_Form:
+      Digital_Transfer_Information:
+        Format_Name: GML
+      Digital_Transfer_Option:
+        Online_Option:
+          Computer_Contact_Information:
+            Network_Address:
+              Network_Resource_Name: 
+                http://geogratis.gc.ca/download/frameworkdata/North_America_Atlas10M/roads/
+              Network_Resource_Name: http://antares.inegi.gob.mx/atlas_norteamerica/
+   Digital_Form:
+      Digital_Transfer_Information:
+        Format_Name: ESRI Shapefile
+      Digital_Transfer_Option:
+        Online_Option:
+          Computer_Contact_Information:
+            Network_Address:
+              Network_Resource_Name: 
+                http://geogratis.gc.ca/download/frameworkdata/North_America_Atlas10M/roads/
+              Network_Resource_Name: http://antares.inegi.gob.mx/atlas_norteamerica/
+              Network_Resource_Name: http://nationalatlas.gov/atlasftp-na.html
+    Fees:
+      Gratuit-Free
+
+Metadata_Reference_Information:
+  Metadata_Date: 200608
+  Metadata_Contact:
+    Contact_Information:
+      Contact_Organization_Primary:
+        Contact_Organization: 
+          Government of Canada, Natural Resources Canada, Canada Centre for 
+          Remote Sensing, The Atlas of Canada
+      Contact_Position: Atlas of Canada Client Services
+      Contact_Address:
+        Address_Type: Mailing address
+        Address: Room 650-615 Booth Street
+        City: Ottawa
+        State_or_Province: Ontario
+        Country: Canada
+        Postal_Code: K1A 0E9
+      Contact_Facsimile_Telephone: +01 613 947 2410
+      Contact_Electronic_Mail_Address: info@atlas.gc.ca
+ 
+  Metadata_Contact:
+   Contact_Information:
+      Contact_Organization_Primary:
+        Contact_Organization: Dirección General de Geografía, INEGI
+      Contact_Position: Administrador de Metadatos Geográficos
+      Contact_Address:
+        Address_Type: Mailing address
+        Address: Av Heroe de Nacozari Sur 2301
+        Address: Fracc Jardines del Parque
+        City: Aguascalientes
+        State_or_Province: Aguascalientes
+        Country: Mexico
+        Postal_Code: 20270
+      Contact_Voice_Telephone: 52 449 910 53 00 ext 5856
+      Contact_Electronic_Mail_Address: rafael.arrioja@inegi.gob.mx
+  Metadata_Contact:
+    Contact_Information:
+      Contact_Person_Primary:
+        Contact_Person: Peg Rawson 
+        Contact_Organization: U.S. Geological Survey
+      Contact_Address:
+        Address_Type: Mailing address
+        Address: 561 National Center
+        City: Reston
+        State_or_Province: Virginia
+        Country: USA
+        Postal_Code: 20192
+      Contact_Voice_Telephone: 703 648 4183
+      Contact_Electronic_Mail_Address: atlasmail@usgs.gov
+  Metadata_Standard_Name: 
+    FGDC Content Standards for Digital Geospatial Metadata 
+  Metadata_Standard_Version: FGDC-STD-001-1998
