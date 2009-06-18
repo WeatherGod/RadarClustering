@@ -98,7 +98,7 @@ for (my $upperIndex = 0; $upperIndex < $upperCnt; $upperIndex++)
 				{
 					if ($inputFile =~ /^(.*\/?)data\/.*\/(.*)\.nc$/)
 					{
-						my $outName = sprintf("%sclustInfo/%s/%s_u%.2f_l%.2f_p%.2f_r%.2f_s%d.nc",
+						my $outName = sprintf("%sClustInfo/%s/%s_u%.2f_l%.2f_p%.2f_r%.2f_s%d.nc",
 								      $1, $runName, $2, $upperLevel, $lowerLevel, $paddingLevel, 
 								      $reachLevel, $subClustDepth);
 						DoCluster($inputFile, $outName, $upperLevel, $lowerLevel, $paddingLevel, $reachLevel, $subClustDepth);
@@ -142,7 +142,7 @@ sub PrintSyntax
 
 sub NewRun
 {
-	mkdir("clustInfo/$_[0]");
+	mkdir("ClustInfo/$_[0]");
 	mkdir("PPI/$_[0]");
 	mkdir("ClustHisto/$_[0]");
 }

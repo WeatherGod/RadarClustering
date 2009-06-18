@@ -7,7 +7,7 @@ from ClusterFileUtils import *		# for GetClustDataSource(), LoadClustFile(), Get
 from ClusterMap import *		# for ClusterMap()
 from LoadRastRadar import *		# for LoadRastRadar()
 
-from RadarPlotUtils import *		# for MakeReflectPPI(), TightBounds()
+from RadarPlotUtils import *		# for MakeReflectPPI(), TightBounds(), PlotMapLayers()
 
 from mpl_toolkits.basemap import Basemap
 import pylab
@@ -74,12 +74,12 @@ fileList.sort()
 
 
 # Getting a consistent domain over series of images
-(minLat, minLon, maxLat, maxLon) = ConsistentDomain(fileList)
+(minLat, minLon, maxLat, maxLon) = ConsistentDomain(fileList, options.pathName)
 
 
 # Map display options
-mapLayers = [['states', {'linewidth':1.5, 'color':'k', 'zorder':0}], 
-	     ['counties', {'linewidth':0.8, 'color':'k', 'zorder':0}],
+mapLayers = [['states', {'linewidth':1.75, 'color':'k', 'zorder':0}], 
+	     ['counties', {'linewidth':0.5, 'color':'k', 'zorder':0}],
 	     ['rivers', {'linewidth':0.5, 'color':'b', 'zorder':0}],
 	     ['roads', {'linewidth':0.75, 'color':'r', 'zorder':0}]]
 
@@ -121,7 +121,9 @@ for filename in fileList :
 	       drawer=map)
     pylab.hold(False)
 
-    os.mkdir(os.sep.join(['PPI', options.runName]))
+    if (not os.access(os.sep.join(['PPI', options.runName]), os.F_OK)) :
+    	os.mkdir(os.sep.join(['PPI', options.runName]))
+
     outfile = os.sep.join(['PPI', options.runName, nameStem + '_clust.png'])
     pylab.savefig(outfile)
     pylab.clf()

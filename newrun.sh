@@ -2,8 +2,7 @@
 
 for RunName in $@
 do
-	mkdir "clustInfo/$RunName"
+	mkdir "ClustInfo/$RunName"
 	mkdir "PPI/$RunName"
-	mkdir "ClustHisto/$RunName"
 done
 

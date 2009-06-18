@@ -38,16 +38,16 @@ endif
 
 ./newrun.sh $runName:q
 
-set Upper = 0.9
+set Upper = 0.5
 set Lower = 0.9
-set Padding = 1
+set Padding = 3
 set Reach = 1.5
 set SubClust = 1
 
 rm -f runLog.txt
 
 foreach filename ($inputFilenames)
-   set outName = `echo $filename:q | sed "s/data.*\//clustInfo\/$runName\//" | sed 's/nc$/nc/' | awk '{ print $1 }'`
+   set outName = `echo $filename:q | sed "s/data.*\//ClustInfo\/$runName\//" | sed 's/.nc$/_clust.nc/' | awk '{ print $1 }'`
    ./test_radar -i $filename:q -o $outName:q -u $Upper -l $Lower -p $Padding -r $Reach -s $SubClust >> runLog.txt
 end
 
