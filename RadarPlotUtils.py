@@ -3,11 +3,11 @@ import numpy		# using .ma for Masked Arrays, also for .isnan()
 import pylab		# for Matlab-like features
 import ctables		# for color table for reflectivities
 import os		# for various filepath-related tasks
-from mpl_toolkits.basemap import Basemap   # for .drawstates(), .readshapefile(), 
+from matplotlib.toolkits.basemap import Basemap   # for .drawstates(), .readshapefile(), 
 						  # .drawrivers(), .drawcountries()
 
-def MakeReflectPPI(vals, lats, lons, titleStr, **kwargs) :   
-    # lut=-1 sets up discretized cmap, rather than smoothly changing cmap 
+def MakeReflectPPI(vals, lats, lons, titleStr, **kwargs) :
+    # lut=-1 sets up discretized colormap, rather than smoothly changing colormap 
     ref_table = ctables.get_cmap('NWSRef', lut=-1)
     norm = matplotlib.colors.normalize(vmin = 0, vmax = 80, clip=True)
     
@@ -17,10 +17,10 @@ def MakeReflectPPI(vals, lats, lons, titleStr, **kwargs) :
 
 
 def MakePPI(x, xlabStr, y, ylabStr, vals, titleStr, colornorm, colorMap, drawer=pylab, **kwargs):
+# It would be best if x and y were parallel arrays to vals.
+# I haven't tried to see what would happen if they were just 1-D arrays each...
     
-    (newx, newy) = pylab.meshgrid(x, y)
-    
-    drawer.pcolor(newx, newy, 
+    drawer.pcolor(x, y, 
 		 numpy.ma.masked_array(vals, mask=numpy.isnan(vals)),
 		 cmap=colorMap, norm=colornorm, shading='flat', **kwargs)
     pylab.title(titleStr, fontsize=14)

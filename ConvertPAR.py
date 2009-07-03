@@ -16,12 +16,10 @@ filelist = glob.glob(os.path.join(lipnDirname, '*.lipn'))
 for filename in filelist :
     # Loads the data from a file.
     parData = LoadPAR_lipn(filename)
-    
-    [gateGrid, aziGrid] = numpy.meshgrid(parData['range_gates'], parData['azimuths'])
-    
+        
     # Rastify the data onto a Lat-Lon grid
     [rastData, latAxis, lonAxis] = Rastify(parData['stat_lat'], parData['stat_lon'], 
-					   parData['vals'], aziGrid, gateGrid,
+					   parData['vals'], parData['azimuth'], parData['range_gate'],
                                            parData['elev_angle'], 1.0, parData['gate_length'],
 					   0.005)
 

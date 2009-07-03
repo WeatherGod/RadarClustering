@@ -9,7 +9,7 @@ from LoadRastRadar import *		# for LoadRastRadar()
 
 from RadarPlotUtils import *		# for MakeReflectPPI(), TightBounds(), PlotMapLayers()
 
-from mpl_toolkits.basemap import Basemap
+from matplotlib.toolkits.basemap import Basemap
 import pylab
 import numpy
 
@@ -68,7 +68,7 @@ if (options.runName == None) :
 print "The runName:", options.runName
 
 
-fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', options.runName, '*.nc']))
+fileList = glob.glob(os.sep.join([options.pathName, 'clustInfo', options.runName, '*.nc']))
 if (len(fileList) == 0) : print "WARNING: No files found for run '" + options.runName + "'!"
 fileList.sort()
 
