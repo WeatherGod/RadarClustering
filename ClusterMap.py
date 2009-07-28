@@ -1,46 +1,17 @@
 import scipy
 import pylab
 
-from ClusterFileUtils import *	# for GetClusterSizeInfo()
+from RadarPlotUtils import MakeReflectPPI
 
-def ClusterMap(clusters, indiciesToShow, drawer=pylab):
+def ClusterMap(clusters, vals, indiciesToShow, drawer=pylab, **kwargs):
+# vals must be indexed in [lat, lon] orientation
+
     print 'producing clust map'
         
-    # Display no more than atMost clusters,
-    # and don't display more than the number
-    # of clusters available. And not less than zero, either.
-#    if (prevDispCnt == None) : prevDispCnt = max(min([atMost, clustCnt, 
-#			    			 len(pylab.find(clustSizes >= minPixelCnt))]), 0)
-
-    # Now, to determine how many to show this time..
-#    dispClustCnt = clustCnt
-    
-
-#    currDispSum = scipy.sum(clustSizes[scipy.array(sortedIndicies[0:dispClustCnt])])
-#    if (prevDispSum == None) : prevDispSum = currDispSum
-
-
-
-#    iterCnt = 0
-#    while (abs(currDispSum - prevDispSum) > 1.5*scipy.std(clustSizes) and (iterCnt < 5)) :
-#        if currDispSum > prevDispSum :
-#	    # There may be too many clusters being shown
-#	    dispClustCnt -= 1
-#	else :
-#	    # There may be too few clusters being shown
-#	    dispClustCnt += 1
-
-#        dispClustCnt = min(clustCnt, max(dispClustCnt, 0))  # Still can't do more than there are or less than zero
-#        currDispSum = scipy.sum(clustSizes[scipy.array(sortedIndicies[0:dispClustCnt])])
-#        iterCnt += 1
-
-
-    wasHold = pylab.ishold()   # record hold state, so that it can be returned to it after I am done.
-    
     boxBoundx = None
     boxBoundy = None
 
-    if wasHold :
+    if pylab.ishold() :
 	boxBoundx = pylab.xlim()
 	boxBoundy = pylab.ylim()
     else :
@@ -49,32 +20,54 @@ def ClusterMap(clusters, indiciesToShow, drawer=pylab):
 
 
     # Dimmer box
+    # zorder helps to keep this dimmer box *below* the other elements that will be added
+    # in this function.
     pylab.fill([boxBoundx[0], boxBoundx[0], boxBoundx[1], boxBoundx[1]],
     	       [boxBoundy[0], boxBoundy[1], boxBoundy[1], boxBoundy[0]],
-    	       'black', alpha=0.5)
+    	       'black', alpha=0.35, hold=True, zorder=1)
      
-    pylab.hold(True)
+#    pylab.hold(True)
 
     (lons, lats) = scipy.meshgrid(clusters['lonAxis'], clusters['latAxis'])
-    Z = scipy.empty_like(lons)
+    outlineGrid = scipy.empty_like(lons)
+    clustVals = scipy.empty_like(lons)
+    clustVals.fill(scipy.nan)
+
+    clustMembers = [pylab.find(clusters['clusterIndicies'] == clustIndx) for clustIndx in indiciesToShow]
 
     # Need to draw each contour separately to guarrantee that the
     # cluster has a closed loop for itself (i.e. - not merged with
     # a neighboring cluster).
     print "ClustCnt:", len(indiciesToShow)
 
-    for clustIndx in indiciesToShow :
-	goodMembers = pylab.find(clusters['clusterIndicies'] == clustIndx)
-#	print clustIndx, clustSizes[clustIndx]
-	Z[:] = scipy.nan
-	# There has to be an easier, faster way...
+    # Assigning all radar values for those pixels in the clusters to clustVals,
+    # which was initialized with NaNs.  When plotted, this has the effect of plotting
+    # only the pixels that were clustered.
+    for goodMembers in clustMembers :
 	for goodIndx in goodMembers :
-		Z[clusters['members_LatLoc'][goodIndx], clusters['members_LonLoc'][goodIndx]] = 1
+	    clustVals[clusters['members_LatLoc'][goodIndx],
+		      clusters['members_LonLoc'][goodIndx]] = vals[clusters['members_LatLoc'][goodIndx],
+								   clusters['members_LonLoc'][goodIndx]]
 
-	drawer.contour(lons, lats, ~scipy.isnan(Z), 
-		       [0, 1, 2], colors='w', linewidths=1.0)
+    # Plot the reflectivities of *just* the clustered pixels
+    # zorder=3 helps to keep it *above* the dimmer box.
+    # Note that it seems that a zorder of 2 does not sufficiently place
+    # this pcolor above the dimmer box.  I don't know why...
+    MakeReflectPPI(clustVals, lats, lons, alpha=1.0, drawer=drawer, zorder=3, **kwargs)
 
-    if (not wasHold) : pylab.hold(False)
+    # Plot the outlines of the clusters by initializing an array with NaNs,
+    # and then assigning ones to the pixels for a particular cluster.
+    # Then plot the contour of this array, forcing it to use only one contour level.
+    # The clusters are done separately so that clusters that touch or even share a few
+    # pixels are still distinguishable.
+    for goodMembers in clustMembers :
+        outlineGrid.fill(scipy.nan)
+	# There has to be an easier, faster, better way...
+	for goodIndx in goodMembers :
+	    outlineGrid[clusters['members_LatLoc'][goodIndx], clusters['members_LonLoc'][goodIndx]] = 1
+
+	drawer.contour(lons, lats, ~scipy.isnan(outlineGrid), 
+		       [0, 1, 2], colors='w', linewidths=2.0, hold=True, zorder=3)
 
     print 'map produced'
 

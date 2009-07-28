@@ -38,9 +38,9 @@ endif
 
 ./newrun.sh $runName:q
 
-set Upper = 0.5
+set Upper = 1.1
 set Lower = 0.9
-set Padding = 3
+set Padding = 0.2
 set Reach = 1.5
 set SubClust = 1
 

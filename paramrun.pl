@@ -151,7 +151,9 @@ sub DoCluster
 {
 	my ($inputFile, $outputFile, $upper, $lower, $padding, $reach, $subClustDepth) = @_;
 
-	if (system("./test_radar -i '$inputFile' -o '$outputFile' -u $upper -l $lower -p $padding -r $reach -s $subClustDepth >> logfile.txt") != 0)
+        my $binDir = '.';
+
+	if (system("$binDir/test_radar -i '$inputFile' -o '$outputFile' -u $upper -l $lower -p $padding -r $reach -s $subClustDepth >> logfile.txt") != 0)
 	{
 		print STDERR "ERROR: Problem with running 'test_radar'!\n";
 		exit(3);

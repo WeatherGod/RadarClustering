@@ -26,6 +26,6 @@ if ($runName == "") then
 endif
 
 
-convert `ls -1 PPI/$runName/*_clust.png | sort -d` -set delay 20 -set dispose none -loop 0 -layers optimize PPI/$runName/$runName.gif
+convert `ls -1 PPI/$runName/*_clust.png | sort -d` -set delay 40 -set dispose none -loop 0 -layers optimize PPI/$runName/$runName.gif
 
 exit 0

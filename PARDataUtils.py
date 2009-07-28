@@ -4,6 +4,18 @@ import math
 import datetime
 import Numeric
 
+class WDSSII_Error(Exception) : 
+    def __init__(self, typeName) :
+        self.badType = typeName
+
+    def __repr__(self) :
+        return "Unknown WDSSII PAR datatype %s" % (self.badType)
+
+    def __str__(self) :
+        return "Unknown WDSSII PAR datatype %s" % (self.badType)
+
+
+
 # All of the loading functions will load the data into (theta, r) coordinates
 # They will also produce coordinate data that will be parallel to the data array.
 # In other words, you will have three 2-D arrays: data, range gate [Meters], azimuth [DEGREES north]
@@ -20,23 +32,49 @@ def LoadPAR_wdssii(filename) :
     
     azimuths = numpy.array(nc.variables['Azimuth'].getValue())
     gateWidths = numpy.array(nc.variables['GateWidth'].getValue())
+    beamWidths = numpy.array(nc.variables['BeamWidth'].getValue())
 
-    parData = numpy.array(nc.variables[varName].getValue())
-    missingData = getattr(nc, 'MissingData')[0][0]
-
-    # TODO: Maybe we should be using masks?
-    parData[parData == missingData] = numpy.nan
-
-    (aziLen, rangeLen) = parData.shape
-    
-    rangeGrid = getattr(nc, 'RangeToFirstGate')[0] + (numpy.tile(numpy.arange(rangeLen), (aziLen, 1)) * 
-						      numpy.tile(gateWidths, (rangeLen, 1)).T)
-    aziGrid = numpy.tile(azimuths, (rangeLen, 1)).T
+    missingData = getattr(nc, 'MissingData')[0]
+    rangeFolded = getattr(nc, 'RangeFolded')[0]
 
     elevAngle = getattr(nc, 'Elevation')[0]
     statLat = getattr(nc, 'Latitude')[0]
     statLon = getattr(nc, 'Longitude')[0]
     scanTime = getattr(nc, 'Time')[0]
+
+    parData = None
+    aziLen = None
+    rangeLen = None
+
+    dataType = getattr(nc, 'DataType')
+
+    if (dataType == 'SparseRadialSet') :
+        rawParData = numpy.array(nc.variables[varName].getValue())
+        xLoc = nc.variables['pixel_x'].getValue()
+        yLoc = nc.variables['pixel_y'].getValue()
+
+        (aziLen, rangeLen) = (azimuths.shape[0], yLoc.max() + 1)
+
+        parData = numpy.empty((aziLen, rangeLen))
+        parData.fill(numpy.nan)
+        parData[xLoc, yLoc] = rawParData
+
+    elif (dataType == 'RadialSet') :
+        parData = numpy.array(nc.variables[varName].getValue())
+
+        (aziLen, rangeLen) = parData.shape
+
+    else :
+        raise WDSSII_Error(dataType)
+
+    
+    rangeGrid = getattr(nc, 'RangeToFirstGate')[0] + (numpy.tile(numpy.arange(rangeLen), (aziLen, 1)) * 
+						      numpy.tile(gateWidths, (rangeLen, 1)).T)
+    aziGrid = numpy.tile(azimuths, (rangeLen, 1)).T
+
+
+    # TODO: Maybe we should be using masks?
+    parData[numpy.logical_or(parData == missingData, parData == rangeFolded)] = numpy.nan
 
     nc.close()
 
@@ -44,7 +82,8 @@ def LoadPAR_wdssii(filename) :
     return {'vals': parData,
 	    'azimuth': aziGrid, 'range_gate': rangeGrid, 'elev_angle': elevAngle,
 	    'stat_lat': statLat, 'stat_lon': statLon,
-	    'scan_time': scanTime, 'var_name': varName}
+	    'scan_time': scanTime, 'var_name': varName,
+	    'gate_length': numpy.median(gateWidths), 'beam_width': numpy.median(beamWidths)}
 
 
 
@@ -88,7 +127,7 @@ def LoadPAR_lipn(filename) :
 	      'azimuth': aziGrid, 'range_gate': rangeGrid, 'elev_angle': elevAngle,
 	      'stat_lat': statLat, 'stat_lon': statLon,
 	      'scan_time': scanTime, 'var_name': varName,
-	      'gate_length': gateLength}
+	      'gate_length': gateLength, 'beam_width': 1.0}
 
 
 

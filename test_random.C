@@ -31,10 +31,10 @@ bool OutputClusters(const string &filename, const vector<Cluster> &theClusters,
 int main()
 {
         ClustParams_t clustParam;
-        clustParam.upperSensitivity = 1.5;
-        clustParam.lowerSensitivity = -0.5;
+        clustParam.upperSensitivity = 0.5;
+        clustParam.lowerSensitivity = 0.9;
         clustParam.paddingLevel = 2.0;
-        clustParam.reach = 2.5;
+        clustParam.reach = 1.5;
         clustParam.subClustDepth = 0;
 
 	const size_t dataCount = 100000;
@@ -90,7 +90,7 @@ int main()
 	cerr << "Cluster Count: " << theClusters.size() << endl;
 	
 
-	if (!OutputClusters("output.txt", theClusters, xSize, ySize, clustParam))
+	if (!OutputClusters("Cluster_Random.netcdf", theClusters, xSize, ySize, clustParam))
 	{
 		cerr << "Problem output to file...\n";
 		return(1);
