@@ -8,17 +8,18 @@ import numpy			# for .meshgrid()
 import scipy.signal		# for .medfilt2d()
 from RadarRastify import *
 
-dataDirname = "/tint/PAR_lipn/2009/02/10"
-rastDirname = "/tint/PAR_lipn/2009/02/10"
+dataDirname = "/tint/PAR_wdssii/"
+rastDirname = "/tint/PAR_wdssii/"
 
 
-filelist = glob.glob(os.path.join(dataDirname, '*.lipn'))
+filelist = glob.glob(os.path.join(dataDirname, '*.netcdf'))
+
 filelist.sort()
 
 for filename in filelist :
     print filename
     # Loads the data from a file.
-    parData = LoadPAR_lipn(filename)
+    parData = LoadPAR_wdssii(filename)
 
     parData['vals'] = scipy.signal.medfilt2d(parData['vals'], [1, 25])
         
