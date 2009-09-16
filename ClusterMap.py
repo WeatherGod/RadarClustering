@@ -24,7 +24,7 @@ def ClusterMap(clusters, vals, indiciesToShow, drawer=pylab, **kwargs):
     # in this function.
     pylab.fill([boxBoundx[0], boxBoundx[0], boxBoundx[1], boxBoundx[1]],
     	       [boxBoundy[0], boxBoundy[1], boxBoundy[1], boxBoundy[0]],
-    	       'black', alpha=0.35, hold=True, zorder=1)
+    	       'black', alpha=0.50, hold=True, zorder=1)
      
 #    pylab.hold(True)
 

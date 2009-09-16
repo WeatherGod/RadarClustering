@@ -138,7 +138,7 @@ def SavePAR_NetCDF(filename, rastPAR, latAxis, lonAxis, scanTime, varName) :
     nc = NetCDFFile(filename, 'w')
     
     # Setting Global Attribute
-    nc.title = 'Rastified PAR ' + varName + ' ' + datetime.datetime.utcfromtimestamp(scanTime).strftime('%H:%M:%S UTC %m/%d/%Y')
+    nc.title = 'Rasterized PAR ' + varName + ' ' + datetime.datetime.utcfromtimestamp(scanTime).strftime('%H:%M:%S UTC %m/%d/%Y')
     
     # Setting the dimensions
     nc.createDimension('lat', len(latAxis))
@@ -147,7 +147,7 @@ def SavePAR_NetCDF(filename, rastPAR, latAxis, lonAxis, scanTime, varName) :
     
     # Setting the variables
     valueVar = nc.createVariable('value', Numeric.Float, ('time', 'lat', 'lon'))
-    valueVar.long_name = 'Rastified PAR ' + varName
+    valueVar.long_name = 'Rasterized PAR ' + varName
     valueVar.assignValue(rastPAR.reshape((1, len(latAxis), len(lonAxis))))
     
     latVar = nc.createVariable('lat', Numeric.Float, ('lat',))

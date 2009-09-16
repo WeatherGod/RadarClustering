@@ -14,7 +14,7 @@ import pylab
 import numpy
 
 import glob		# for filename globbing
-import os		# for os.sep.join(), os.path.split(), os.path.splitext(), os.mkdir()
+import os		# for os.sep.join(), os.path.split(), os.path.splitext(), os.makedirs(), os.path.exists()
 
 
 
@@ -95,9 +95,8 @@ for (figIndex, filename) in enumerate(fileList):
     #pylab.axis('equal')
 
 
-# TODO: May be able to update this with os.path.exists() or something like that...
-if (not os.access(os.sep.join(['PPI', options.runName]), os.F_OK)) :
-    os.mkdir(os.sep.join(['PPI', options.runName]))
+if (not os.path.exists(os.sep.join(['PPI', options.runName]))) :
+    os.makedirs(os.sep.join(['PPI', options.runName]))
 
 
 #outfile = os.sep.join(['PPI', options.runName, 'AMS_Params_Group.eps'])
