@@ -155,9 +155,9 @@ def GreatCircleDist(fromLons, fromLats, toLons, toLats, radius=6367470.0) :
     toLons = numpy.radians(toLons)
     toLats = numpy.radians(toLats)
 
-    return(radius * 2.0 * numpy.arcsin(numpy.sqrt(numpy.sin((toLat - fromLat)/2.0) ** 2
-					      + numpy.cos(fromLat) * numpy.cos(toLat)
-						* numpy.sin((toLon - fromLon)/2.0) **2)))
+    return(radius * 2.0 * numpy.arcsin(numpy.sqrt(numpy.sin((toLats - fromLats)/2.0) ** 2
+					      + numpy.cos(fromLats) * numpy.cos(toLats)
+						* numpy.sin((toLons - fromLons)/2.0) **2)))
 
 def LatLonFrom(fromLat, fromLon, dist, azi, radius=6367470.0) :
     """
@@ -182,9 +182,10 @@ def npi2pi(inAngle) :
 		      - 2.0*numpy.ceil(((numpy.abs(inAngle)/math.pi)-1.0)/2.0))
            * numpy.sign(inAngle))
 
+# TODO: FIX THIS!!!!
 def zero22pi(inAngle) :
     outAngle = npi2pi(inAngle)
-    outAngle[outAngle < 0.0] += 2.0 * math.pi
+    outAngle[scipy.nonzero(outAngle < 0.0)] = outAngle[scipy.nonzero(outAngle < 0.0)] + 2.0 * math.pi
     return(outAngle)
 
 def makerefmat(crnrlon, crnrlat, dx, dy) :
