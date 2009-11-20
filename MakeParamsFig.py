@@ -35,13 +35,22 @@ if (options.runName == None) :
 
 print "The runName:", options.runName
 
+optionParams = {}
+optionParams['WSR'] = {'runName': 'New_AMS_Params',
+			   'domain': (38.0, -100.0, 40.0, -96.0),
+			   'destNameStem': '../../Documents/SPA/WSR_Demo%d'}
 
-fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', options.runName, '*.nc']))
+optionParams['NWRT'] = {'runName': 'NWRT_Params',
+                        'domain': (35.5, -100.0, 37.5, -97.0),
+                        'destNameStem': '../../Documents/SPA/NWRT_Demo%d'}
+
+
+fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', optionParams[options.runName]['runName'], '*.nc']))
 if (len(fileList) == 0) : print "WARNING: No files found for run '" + options.runName + "'!"
 fileList.sort()
 
 # AMS_Params: [-100.0, -96.0], [38.0, 40.0]
-(minLat, minLon, maxLat, maxLon) = (38.0, -100.0, 40.0, -96.0)
+(minLat, minLon, maxLat, maxLon) = optionParams[options.runName]['domain']
 
 
 
@@ -61,15 +70,10 @@ print minLat, minLon, maxLat, maxLon
 # Looping over all of the desired cluster files
 
 pylab.figure()
-pylab.subplots_adjust(left = 0.05, right = 0.9,
-		      bottom = 0.05, top = 0.95,
-		      wspace = 0.05, hspace = 0.025)
 
 for (figIndex, filename) in enumerate(fileList):
     (pathname, nameStem) = os.path.split(filename)
 
-    
-    pylab.subplot(3, 3, figIndex + 1)
     PlotMapLayers(map, mapLayers)
 
     pylab.hold(True)
@@ -84,27 +88,17 @@ for (figIndex, filename) in enumerate(fileList):
     # zorder=1 so that it is above the Map Layers.
     MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
 		   colorbar=False, axis_labels=False, drawer=map, zorder=1, alpha=0.09,
-		   titlestr = "U = %.2f     n = %d" % (clustParams['devsAbove'], clustParams['subClustDepth']), titlesize = 10)
+		   titlestr = "U = %.2f     n = %d" % (clustParams['devsAbove'], clustParams['subClustDepth']), titlesize = 16)
     pylab.hold(True)
     
     (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
     ClusterMap(clusters,pylab.squeeze(rastData['vals']), sortedIndicies,#len(pylab.find(clustSizes >= (avgSize + 0.25*stdSize)))],
 	       axis_labels=False, colorbar=False, drawer=map)
-    pylab.hold(True)
-    #pylab.axis('equal')
 
 
-if (not os.path.exists(os.sep.join(['PPI', options.runName]))) :
-    os.makedirs(os.sep.join(['PPI', options.runName]))
-
-
-#outfile = os.sep.join(['PPI', options.runName, 'AMS_Params_Group.eps'])
-#pylab.savefig(outfile)
-outfile = os.sep.join(['PPI', options.runName, 'AMS_Params_Group.png'])
-pylab.savefig(outfile, dpi=200)
-pylab.clf()
-
-
-
+    # Commenting out .eps file, they are coming out waaayyy too big!
+    #pylab.savefig(('%s_Raw.eps' % (optionParams[options.runName]['destNameStem'])) % figIndex)
+    pylab.savefig(('%s_Raw.png' % (optionParams[options.runName]['destNameStem'])) % figIndex, dpi=200)
+    pylab.clf()
 

@@ -10,10 +10,10 @@ my ($runName, $inputFile,
     $paddingStart, $paddingCnt, $paddingEnd,
     $reachStart, $reachCnt, $reachEnd,
     $subClustStart, $subClustEnd) 	= (undef, undef, 1.96, 1, 1.96,
-							-0.25, 1, -0.25,
-							5, 1, 5,
+							0.9, 1, 0.9,
 							2.5, 1, 2.5,
-							0, 0);
+							1.5, 1, 1.5,
+							1, 1);
 
 if (!GetOptions(
 	"help|h"	=> sub { PrintHelp();

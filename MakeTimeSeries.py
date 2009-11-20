@@ -36,12 +36,21 @@ if (options.runName == None) :
 
 print "The runName:", options.runName
 
+optionParams = {}
+optionParams['WSR'] = {'runName': 'New_AMS_TimeSeries',
+                           'domain': (35.5, -98.5, 40.0, -93.5),
+                           'destNameStem': '../../Documents/SPA/WSR_Series%d'}
 
-fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', options.runName, '*.nc']))
+optionParams['NWRT'] = {'runName': 'NWRT_TimeSeries',
+                        'domain': (35.5, -99.5, 37.5, -97.75),
+                        'destNameStem': '../../Documents/SPA/NWRT_Series%d'}
+
+
+fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', optionParams[options.runName]['runName'], '*.nc']))
 if (len(fileList) == 0) : print "WARNING: No files found for run '" + options.runName + "'!"
 fileList.sort()
 
-(minLat, minLon, maxLat, maxLon) = (35.5, -98.5, 40.0, -93.5)
+(minLat, minLon, maxLat, maxLon) = optionParams[options.runName]['domain']
 
 
 # Map display options
@@ -55,18 +64,12 @@ mapLayers = [['states', {'linewidth':1.5, 'color':'k', 'zorder':0}],
 map = Basemap(projection='cyl', resolution='i', suppress_ticks=False,
 				llcrnrlat = minLat, llcrnrlon = minLon,
 				urcrnrlat = maxLat, urcrnrlon = maxLon)
-pylab.figure(figsize=(8.0 * 2.0, 6.0))
-pylab.subplots_adjust(wspace = 0.2, hspace = 0.05,
-		      bottom = 0.05, top = 0.95,
-		      left = 0.05, right = 0.95)
+pylab.figure()
 
-print minLat, minLon, maxLat, maxLon
+#print minLat, minLon, maxLat, maxLon
 # Looping over all of the desired cluster files
 for (figIndex, filename) in enumerate(fileList[0:3]):
     (pathname, nameStem) = os.path.split(filename)
-
-    
-    pylab.subplot(1, 3, figIndex + 1)
 
     PlotMapLayers(map, mapLayers)
     pylab.hold(True)
@@ -80,7 +83,7 @@ for (figIndex, filename) in enumerate(fileList[0:3]):
     # This plot will get 'dimmed' by the later ClusterMap().
     # zorder=1 so that it is above the Map Layers.
     MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
-		   colorbar=False, axis_labels=True, drawer=map, zorder=1, alpha=0.09,
+		   colorbar=False, axis_labels=False, ylabel=(None if figIndex != 0 else "Latitude"),  xlabel="Longitude", drawer=map, zorder=1, alpha=0.09,
 		   titlestr=datetime.datetime.utcfromtimestamp(rastData['scan_time']).strftime('%Y/%m/%d  %H:%M:%S'))
     pylab.hold(True)
     
@@ -90,17 +93,14 @@ for (figIndex, filename) in enumerate(fileList[0:3]):
 	       axis_labels=False, colorbar=False, drawer=map)
     pylab.hold(True)
     
+    # Neat trick to have only the outer parts of the subplots get axis labels...
     pylab.gca().label_outer()
 
 
-# TODO: May be able to update this with os.path.exists() or something like that...
-if (not os.path.exists(os.sep.join(['PPI', options.runName]))) :
-    os.makedirs(os.sep.join(['PPI', options.runName]))
-
-outfile = os.sep.join(['PPI', options.runName, 'AMS_TimeSeries_Group.png'])
-pylab.savefig(outfile, dpi=200)
-pylab.clf()
-
+    # Commenting out .eps file... they are coming out waayyy too big!
+    #pylab.savefig(('%s_Raw.eps' % (optionParams[options.runName]['destNameStem'])) % figIndex)
+    pylab.savefig(('%s_Raw.png' % (optionParams[options.runName]['destNameStem'])) % figIndex, dpi=200)
+    pylab.clf()
 
 
 
