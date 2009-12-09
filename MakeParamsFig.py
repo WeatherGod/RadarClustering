@@ -41,7 +41,7 @@ optionParams['WSR'] = {'runName': 'New_AMS_Params',
 			   'destNameStem': '../../Documents/SPA/WSR_Demo%d'}
 
 optionParams['NWRT'] = {'runName': 'NWRT_Params',
-                        'domain': (35.5, -100.0, 37.5, -97.0),
+                        'domain': (35.5, -100.0, 37.0, -97.0),
                         'destNameStem': '../../Documents/SPA/NWRT_Demo%d'}
 
 

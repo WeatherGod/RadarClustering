@@ -42,7 +42,7 @@ optionParams['WSR'] = {'runName': 'New_AMS_TimeSeries',
                            'destNameStem': '../../Documents/SPA/WSR_Series%d'}
 
 optionParams['NWRT'] = {'runName': 'NWRT_TimeSeries',
-                        'domain': (35.5, -99.5, 37.5, -97.75),
+                        'domain': (35.5, -99.5, 37.075, -97.75),
                         'destNameStem': '../../Documents/SPA/NWRT_Series%d'}
 
 
