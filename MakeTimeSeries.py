@@ -21,10 +21,12 @@ import os		# for os.sep.join(), os.path.split(), os.path.splitext(), os.makedirs
 
 
 parser = OptionParser()
-parser.add_option("-r", "--run", dest="runName",
+parser.add_option("-r", "--run", dest="runName", type="string",
 		  help="Generate cluster images for RUNNAME", metavar="RUNNAME")
-parser.add_option("-p", "--path", dest="pathName",
+parser.add_option("-p", "--path", dest="pathName", type="string",
 		  help="PATHNAME for cluster files and radar data", metavar="PATHNAME", default='.')
+parser.add_option("-t", "--test", dest="isTest", action="store_true",
+		  help="If set, files will be saved in current directory as 'tempy*.png'", default=False)
 
 
 (options, args) = parser.parse_args()
@@ -37,18 +39,22 @@ if (options.runName == None) :
 print "The runName:", options.runName
 
 optionParams = {}
-optionParams['WSR'] = {'runName': 'New_AMS_TimeSeries',
-                           'domain': (35.5, -98.5, 40.0, -93.5),
-                           'destNameStem': '../../Documents/SPA/WSR_Series%d'}
+optionParams['WSR'] = {'runName': 'Test_WSR_TimeSeries',
+                        'domain': (35.5, -98.5, 40.0, -93.5),
+                        'destNameStem': '../../Documents/SPA/WSR_Series%d'}
 
-optionParams['NWRT'] = {'runName': 'NWRT_TimeSeries',
+optionParams['NWRT'] = {'runName': 'Test_NWRT_TimeSeries',
                         'domain': (35.5, -99.5, 37.075, -97.75),
                         'destNameStem': '../../Documents/SPA/NWRT_Series%d'}
 
 
 fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', optionParams[options.runName]['runName'], '*.nc']))
-if (len(fileList) == 0) : print "WARNING: No files found for run '" + options.runName + "'!"
+if (len(fileList) < 3) : print "WARNING: Not enough files found for run '" + options.runName + "'!"
 fileList.sort()
+
+if options.isTest :
+   optionParams[options.runName]['destNameStem'] = 'tempySeries%d'
+
 
 (minLat, minLon, maxLat, maxLon) = optionParams[options.runName]['domain']
 
@@ -64,7 +70,7 @@ mapLayers = [['states', {'linewidth':1.5, 'color':'k', 'zorder':0}],
 map = Basemap(projection='cyl', resolution='i', suppress_ticks=False,
 				llcrnrlat = minLat, llcrnrlon = minLon,
 				urcrnrlat = maxLat, urcrnrlon = maxLon)
-pylab.figure()
+
 
 #print minLat, minLon, maxLat, maxLon
 # Looping over all of the desired cluster files
@@ -72,7 +78,7 @@ for (figIndex, filename) in enumerate(fileList[0:3]):
     (pathname, nameStem) = os.path.split(filename)
 
     PlotMapLayers(map, mapLayers)
-    pylab.hold(True)
+    
     
     (clustParams, clusters) = LoadClustFile(filename)
     rastData = LoadRastRadar(os.sep.join([options.pathName, clustParams['dataSource']]))
@@ -83,15 +89,14 @@ for (figIndex, filename) in enumerate(fileList[0:3]):
     # This plot will get 'dimmed' by the later ClusterMap().
     # zorder=1 so that it is above the Map Layers.
     MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
-		   colorbar=False, axis_labels=False, ylabel=(None if figIndex != 0 else "Latitude"),  xlabel="Longitude", drawer=map, zorder=1, alpha=0.09,
+		   colorbar=False, axis_labels=False, ylabel=(None if figIndex != 0 else "Latitude"),  xlabel="Longitude", drawer=map, zorder=1, alpha=0.15,
 		   titlestr=datetime.datetime.utcfromtimestamp(rastData['scan_time']).strftime('%Y/%m/%d  %H:%M:%S'))
-    pylab.hold(True)
+    #pylab.hold(True)
     
     (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
     ClusterMap(clusters,pylab.squeeze(rastData['vals']), sortedIndicies,#len(pylab.find(clustSizes >= (avgSize + 0.25*stdSize)))],
-	       axis_labels=False, colorbar=False, drawer=map)
-    pylab.hold(True)
+	       axis_labels=False, colorbar=False, zorder = 2.0, drawer=map)
     
     # Neat trick to have only the outer parts of the subplots get axis labels...
     pylab.gca().label_outer()
@@ -99,7 +104,7 @@ for (figIndex, filename) in enumerate(fileList[0:3]):
 
     # Commenting out .eps file... they are coming out waayyy too big!
     #pylab.savefig(('%s_Raw.eps' % (optionParams[options.runName]['destNameStem'])) % figIndex)
-    pylab.savefig(('%s_Raw.png' % (optionParams[options.runName]['destNameStem'])) % figIndex, dpi=200)
+    pylab.savefig(('%s_Raw.png' % (optionParams[options.runName]['destNameStem'])) % figIndex, dpi=250)
     pylab.clf()
 
 

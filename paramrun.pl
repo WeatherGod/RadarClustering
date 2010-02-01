@@ -9,10 +9,10 @@ my ($runName, $inputFile,
     $lowerStart, $lowerCnt, $lowerEnd,
     $paddingStart, $paddingCnt, $paddingEnd,
     $reachStart, $reachCnt, $reachEnd,
-    $subClustStart, $subClustEnd) 	= (undef, undef, 1.96, 1, 1.96,
+    $subClustStart, $subClustEnd) 	= (undef, undef, 1.1, 1, 1.1,
 							0.9, 1, 0.9,
-							2.5, 1, 2.5,
-							1.5, 1, 1.5,
+							0.75, 1, 0.75,
+							5.1, 1, 5.1,
 							1, 1);
 
 if (!GetOptions(

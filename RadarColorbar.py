@@ -26,6 +26,6 @@ cb1 = mpl.colorbar.ColorbarBase(ax1, cmap=colorInfo['ref_table'],
 cb1.set_label('Reflectivity [dBZ]')
 
 pyplot.savefig('../../Documents/SPA/Colorbar_Raw.eps')
-pyplot.savefig('../../Documents/SPA/Colorbar_Raw.png', dpi=200)
+pyplot.savefig('../../Documents/SPA/Colorbar_Raw.png', dpi=250)
 
 

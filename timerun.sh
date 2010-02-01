@@ -40,8 +40,8 @@ endif
 
 set Upper = 1.1
 set Lower = 0.9
-set Padding = 0.2
-set Reach = 1.5
+set Padding = 0.75
+set Reach = 5.1
 set SubClust = 1
 
 rm -f runLog.txt

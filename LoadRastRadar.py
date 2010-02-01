@@ -2,7 +2,7 @@ from Scientific.IO.NetCDF import *
 
 def LoadRastRadar(infilename) :
     nc = NetCDFFile(infilename, 'r')
-    titleStr = getattr(nc, 'title')
+    titleStr = getattr(nc, 'title').replace("Rastified", "Rasterized")
     lats = nc.variables['lat'].getValue()
     lons = nc.variables['lon'].getValue()
     vals = nc.variables['value'].getValue()
