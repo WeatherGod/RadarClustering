@@ -99,7 +99,7 @@ for (figIndex, filename) in enumerate(fileList[0:3]):
 	       axis_labels=False, colorbar=False, zorder = 2.0, drawer=map)
     
     # Neat trick to have only the outer parts of the subplots get axis labels...
-    pylab.gca().label_outer()
+    #pylab.gca().label_outer()
 
 
     # Commenting out .eps file... they are coming out waayyy too big!

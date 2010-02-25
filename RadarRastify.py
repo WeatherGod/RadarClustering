@@ -159,6 +159,16 @@ def GreatCircleDist(fromLons, fromLats, toLons, toLats, radius=6367470.0) :
 					      + numpy.cos(fromLats) * numpy.cos(toLats)
 						* numpy.sin((toLons - fromLons)/2.0) **2)))
 
+def Bearing(fromLons, fromLats, toLons, toLats) :
+    fromLons = numpy.radians(fromLons)
+    fromLats = numpy.radians(fromLats)
+    toLons = numpy.radians(toLons)
+    toLats = numpy.radians(toLats)
+
+    return(numpy.arctan2( numpy.sin(toLons - fromLons) * numpy.cos(toLats),
+			numpy.cos(fromLats) * numpy.sin(toLats)
+			- numpy.sin(fromLats) * numpy.cos(toLats) * numpy.cos(toLons - fromLons) ) )
+
 def LatLonFrom(fromLat, fromLon, dist, azi, radius=6367470.0) :
     """
     RETURNS (toLat, toLon)

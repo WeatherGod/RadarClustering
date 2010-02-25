@@ -109,18 +109,19 @@ for filename in fileList :
     
     (clustParams, clusters) = LoadClustFile(filename)
     rastData = LoadRastRadar(os.sep.join([options.pathName, clustParams['dataSource']]))
+    rastData['vals'][rastData['vals'] < 0.0] = numpy.nan
 
     # Plotting the full reflectivity image, with significant transparency (alpha=0.25).
     # This plot will get 'dimmed' by the later ClusterMap().
     # zorder=1 so that it is above the Map Layers.
     MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
-		   alpha=0.25, drawer=map, zorder=1, titlestr=rastData['title'], colorbar=False, axis_labels=False)
-    pylab.hold(True)
+		   alpha=0.15, drawer=map, zorder=1, titlestr=rastData['title'], colorbar=False, axis_labels=False)
+    #pylab.hold(True)
     
     (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
     ClusterMap(clusters,pylab.squeeze(rastData['vals']), sortedIndicies,#len(pylab.find(clustSizes >= (avgSize + 0.25*stdSize)))],
-	       drawer=map)
+	       axis_labels=False, colorbar=False, zorder = 2.0, drawer=map)
     pylab.hold(False)
 
     if (not os.path.exists(os.sep.join(['PPI', options.runName]))) :
