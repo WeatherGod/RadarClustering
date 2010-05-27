@@ -3,22 +3,22 @@
 from ClusterMap import *
 from LoadRastRadar import *
 from RadarPlotUtils import *
+import MapUtils
 
 from mpl_toolkits.basemap import Basemap
 
 import pylab
 
 theFile = 'TestData.nc'
+rasterized = False
+namestem = ""
 
 
 rastData = LoadRastRadar(theFile)
 
 print pylab.nanmin(pylab.squeeze(rastData['vals']))
 
-mapLayers = [['states', {'linewidth':1.5, 'color':'k', 'zorder':0}],
-             ['counties', {'linewidth':0.5, 'color':'k', 'zorder':0}],
-             ['rivers', {'linewidth':0.5, 'color':'b', 'zorder':0}],
-             ['roads', {'linewidth':0.75, 'color':'r', 'zorder':0}]]
+mapLayers = MapUtils.mapLayers
 
 
 # Map domain
@@ -26,32 +26,57 @@ map = Basemap(projection='cyl', resolution='i', suppress_ticks=False,
                                 llcrnrlat = rastData['lats'].min(), llcrnrlon = rastData['lons'].min(),
                                 urcrnrlat = rastData['lats'].max(), urcrnrlon = rastData['lons'].max())
 
-pylab.figure(figsize = (15.0, 6.0))
+fig = pylab.figure(figsize = (15.0, 6.0))
 
-pylab.subplot(1, 2, 1)
-PlotMapLayers(map, mapLayers)
-pylab.hold(True)
+ax = fig.add_subplot(1, 2, 1)
 
-MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
-               drawer=map, zorder=1, hold = True, titlestr=rastData['title'])
+#map.drawstates(ax=ax, linewidth=1.5, color='k')
+#map.drawrivers(ax=ax, linewidth=0.5, color='b')
+
+MapUtils.PlotMapLayers(map, mapLayers, ax)
+
+print rastData['lats'].shape
+
+lonGrid, latGrid = numpy.meshgrid(rastData['lons'], rastData['lats'])
+
+boxBoundx = ax.get_xlim()
+boxBoundy = ax.get_ylim()
+
+MakeReflectPPI(pylab.squeeze(rastData['vals']), latGrid, lonGrid,
+               zorder=1, titlestr=rastData['title'], rasterized=rasterized, axis=ax)
+
+#ax.set_xlim(boxBoundx)
+#ax.set_ylim(boxBoundy)
+
+ax = fig.add_subplot(1, 2, 2)
+MapUtils.PlotMapLayers(map, mapLayers, ax)
+#MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
+#               zorder=0.5, alpha=0.05, titlestr=rastData['title'], rasterized=rasterized, axis=ax)
 
 
-pylab.subplot(1, 2, 2)
-PlotMapLayers(map, mapLayers)
-pylab.hold(True)
-MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
-               drawer=map, zorder=1, alpha=0.05, hold = True, titlestr=rastData['title'])
 
-boxBoundx = pylab.xlim()
-boxBoundy = pylab.ylim()
+print boxBoundx
+print boxBoundy
 
-
-pylab.fill([boxBoundx[0], boxBoundx[0], boxBoundx[1], boxBoundx[1]],
+ax.fill([boxBoundx[0], boxBoundx[0], boxBoundx[1], boxBoundx[1]],
            [boxBoundy[0], boxBoundy[1], boxBoundy[1], boxBoundy[0]],
-           'black', alpha=0.35, hold=True, zorder=1)
+           'black', alpha=0.35, zorder=1)
 
-pylab.xlim(boxBoundx)
-pylab.ylim(boxBoundy)
 
+#ax.set_xlim(boxBoundx)
+#ax.set_ylim(boxBoundy)
+
+print ax.get_xlim()
+print ax.get_ylim()
+
+
+
+#print "Saving PNG"
+#fig.savefig("testppi_%s.png" % namestem)
+#print "Saving PDF"
+#fig.savefig("testppi_%s.pdf" % namestem)
+#print "Saving EPS"
+#fig.savefig("testppi_%s.eps" % namestem)
 
 pylab.show()
+
