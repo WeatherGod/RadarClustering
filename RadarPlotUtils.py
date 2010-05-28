@@ -34,7 +34,7 @@ def MakePPI(x, y, vals, norm, ref_table, axis=None,
     if axis is None :
         axis = pyplot.gca()
     
-    thePlot = axis.pcolormesh(x, y, 
+    thePlot = axis.pcolor(x, y, 
 			  numpy.ma.masked_array(vals, mask=numpy.isnan(vals)),
 			  cmap=ref_table, norm=norm, **kwargs)
 

@@ -9,7 +9,7 @@ from LoadRastRadar import *		# for LoadRastRadar()
 
 from RadarPlotUtils import *		# for MakeReflectPPI(), TightBounds(), PlotMapLayers()
 
-#from mpl_toolkits.axes_grid1 import AxesGrid
+#from mpl_toolkits.axes_grid import AxesGrid
 from mpl_toolkits.basemap import Basemap
 import MapUtils				# for PlotMapLayers and default mapLayers structure
 import matplotlib.pyplot as pyplot
@@ -67,14 +67,16 @@ if options.isTest :
 mapLayers = MapUtils.mapLayers
 
 # Map domain
-map = Basemap(projection='cyl', resolution='i', suppress_ticks=True,
+map = Basemap(projection='cyl', resolution='i', suppress_ticks=True, fix_aspect=False,
 				llcrnrlat = minLat, llcrnrlon = minLon,
 				urcrnrlat = maxLat, urcrnrlon = maxLon)
 
 print minLat, minLon, maxLat, maxLon
 # Looping over all of the desired cluster files
 
-fig = pyplot.figure(figsize=(5.0, 9.65))	# should be good for 3x3 grid
+
+#fig = pyplot.figure(figsize=(5.0, 9.65))	# should be good for 3x3 grid
+fig = pyplot.figure(figsize=(9.65, 5.0))	# should be good for 3x3 grid
 figLayout = (3, 3)
 #grid = AxesGrid(fig, 111,
 #                nrows_ncols = (3, 3),
@@ -85,12 +87,11 @@ figLayout = (3, 3)
 for (figIndex, filename) in enumerate(fileList[0:1]):
     (pathname, nameStem) = os.path.split(filename)
     #ax = grid[figIndex]
-
-
     ax = fig.add_subplot(figLayout[0], figLayout[1], figIndex + 1)
 
     MapUtils.PlotMapLayers(map, mapLayers, axis=ax)
     
+
 #    ax.set_aspect('auto')
 
     (clustParams, clusters) = LoadClustFile(filename)
@@ -109,14 +110,15 @@ for (figIndex, filename) in enumerate(fileList[0:1]):
     (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
     tmpIM = ClusterMap(clusters, numpy.squeeze(rastData['vals']), sortedIndicies,#len(numpy.nonzero(clustSizes >= (avgSize + 0.25*stdSize)))],
-	       doRadarBG=True, radarBG_alpha=0.15,
-               doDimmerBox=True, dimmerBox_alpha=0.25,
+	       doRadarBG=True, radarBG_alpha=0.10,
+               doDimmerBox=True, dimmerBox_alpha=0.20,
 	       axis_labels=False, colorbar=False,
 	       titlestr='U = %.2f    n = %d' % (clustParams['devsAbove'], clustParams['subClustDepth']),
-	       titlesize='medium', rasterized=True,
+	       titlesize=10, rasterized=True,
 	       zorder=1.0, axis=ax)
 
     # Makes sure that the axes gets the proper limits as originally set by the Basemap.
+
     map.set_axes_limits(ax=ax)
     #ax.set_xlim((minLon, maxLon))
     #ax.set_ylim((minLat, maxLat))

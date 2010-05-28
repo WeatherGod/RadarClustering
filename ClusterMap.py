@@ -1,5 +1,6 @@
 import numpy
 import matplotlib.pyplot as pyplot
+import inpoly
 
 from RadarPlotUtils import MakeReflectPPI
 
@@ -35,12 +36,18 @@ def ClusterMap(clusters, vals, indicesToShow,
 
     holdStatus = axis.ishold()
 
-    if holdStatus :
-	boxBoundx = axis.get_xlim()
-	boxBoundy = axis.get_ylim()
-    else :
-    	boxBoundx = (min(clusters['lonAxis']), max(clusters['lonAxis']))
-    	boxBoundy = (min(clusters['latAxis']), max(clusters['latAxis']))
+    #if holdStatus :
+    #	boxBoundx = axis.get_xlim()
+    #	boxBoundy = axis.get_ylim()
+    #else :
+    boxBoundx = (min(clusters['lonAxis']), max(clusters['lonAxis']))
+    boxBoundy = (min(clusters['latAxis']), max(clusters['latAxis']))
+
+    bbBoxX = [boxBoundx[0], boxBoundx[0], boxBoundx[1], boxBoundx[1]]
+    bbBoxY = [boxBoundy[0], boxBoundy[1], boxBoundy[1], boxBoundy[0]]
+    bbBox = zip(bbBoxX, bbBoxY)
+
+    
 
 
     (lons, lats) = numpy.meshgrid(clusters['lonAxis'], clusters['latAxis'])
@@ -72,8 +79,8 @@ def ClusterMap(clusters, vals, indicesToShow,
 
     # --------Dimmer box--------
     if doDimmerBox :
-        axis.fill([boxBoundx[0], boxBoundx[0], boxBoundx[1], boxBoundx[1]],
-    	          [boxBoundy[0], boxBoundy[1], boxBoundy[1], boxBoundy[0]],
+        print "doing Dimmer Box"
+        axis.fill(bbBoxX, bbBoxY,
     	          'black', zorder = zorders[zorderIndex], alpha=dimmerBox_alpha)
         zorderIndex += 1
         axis.hold(True)
@@ -110,6 +117,12 @@ def ClusterMap(clusters, vals, indicesToShow,
     # The clusters are done separately so that clusters that touch or even share a few
     # pixels are still distinguishable.
     for index, goodMembers in enumerate(clustMembers) :
+        # If the cluster does not exist within the bounding box, don't bother rendering it.
+	if not numpy.any(inpoly.point_inside_polygon(zip(clusters['lonAxis'][clusters['members_LonLoc'][goodMembers]],
+						         clusters['latAxis'][clusters['members_LatLoc'][goodMembers]]),
+						 bbBox)) :
+            continue
+
         outlineGrid.fill(numpy.nan)
 	clustVals.fill(numpy.nan)
 
@@ -131,12 +144,12 @@ def ClusterMap(clusters, vals, indicesToShow,
 	# This could probably be improved
 	outline = axis.contour(lons, lats, ~numpy.isnan(outlineGrid), 
 			       [0, 1, 2], colors='w', linewidths=6.0, zorder = zorders[zorderIndex])
-        SetContourZorder(outline, zorders[1 + 3*index])
+        SetContourZorder(outline, zorders[zorderIndex])
 
         # shadow of the white line
 	outline = axis.contour(lons, lats, ~numpy.isnan(outlineGrid), 
 		       	       [0, 1, 2], colors='k', linewidths=3.0, zorder = zorders[zorderIndex + 1])
-        SetContourZorder(outline, zorders[2 + 3*index])
+        SetContourZorder(outline, zorders[zorderIndex + 1])
 
         tmpIM = MakeReflectPPI(clustVals, lats, lons, axis=axis, zorder=zorders[zorderIndex + 2],
 		       axis_labels=False, colorbar=False, titlestr=None, **kwargs)
