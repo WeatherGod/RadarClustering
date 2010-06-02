@@ -9,7 +9,7 @@ from LoadRastRadar import *		# for LoadRastRadar()
 
 from RadarPlotUtils import *		# for MakeReflectPPI(), TightBounds(), PlotMapLayers()
 
-#from mpl_toolkits.axes_grid import AxesGrid
+from mpl_toolkits.axes_grid import AxesGrid
 from mpl_toolkits.basemap import Basemap
 import MapUtils				# for PlotMapLayers and default mapLayers structure
 import matplotlib.pyplot as pyplot
@@ -78,16 +78,16 @@ print minLat, minLon, maxLat, maxLon
 #fig = pyplot.figure(figsize=(5.0, 9.65))	# should be good for 3x3 grid
 fig = pyplot.figure(figsize=(9.65, 5.0))	# should be good for 3x3 grid
 figLayout = (3, 3)
-#grid = AxesGrid(fig, 111,
-#                nrows_ncols = (3, 3),
-#		aspect=True,
-#		cbar_mode='single',
-#		cbar_pad=0.05, cbar_size=0.08)
+grid = AxesGrid(fig, 111,
+                nrows_ncols = (3, 3),
+		axes_pad=0.1,
+		cbar_mode='single',
+		cbar_pad=0.05)#, cbar_size=0.08)
 
-for (figIndex, filename) in enumerate(fileList[0:1]):
-    (pathname, nameStem) = os.path.split(filename)
-    #ax = grid[figIndex]
-    ax = fig.add_subplot(figLayout[0], figLayout[1], figIndex + 1)
+for figIndex, filename in enumerate(fileList[0:3]):
+    pathname, nameStem = os.path.split(filename)
+    ax = grid[figIndex]
+    #ax = fig.add_subplot(figLayout[0], figLayout[1], figIndex + 1)
 
     MapUtils.PlotMapLayers(map, mapLayers, axis=ax)
     
@@ -119,10 +119,11 @@ for (figIndex, filename) in enumerate(fileList[0:1]):
 
     # Makes sure that the axes gets the proper limits as originally set by the Basemap.
 
-    map.set_axes_limits(ax=ax)
+    #map.set_axes_limits(ax=ax)
     #ax.set_xlim((minLon, maxLon))
     #ax.set_ylim((minLat, maxLat))
 
+MakeRadarColorbar(tmpIM, "Reflectivity [dBZ]", fig, cax=grid.cbar_axes[0]) 
 #fig.colorbar(tmpIM, cax=grid.cbar_axes[0])
 print "Saving..."
 fig.savefig('%s%s%s_ParamDemo.%s' % (optionParams[options.runName]['destDir'], os.sep, options.runName, options.outputFormat), 

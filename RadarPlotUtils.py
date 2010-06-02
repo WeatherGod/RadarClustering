@@ -28,7 +28,7 @@ def MakeReflectPPI(vals, lats, lons, axis_labels=True, **kwargs) :
 
 def MakePPI(x, y, vals, norm, ref_table, axis=None,
 	    xlabel=None, ylabel=None, colorbar=True, 
-	    colorbarLabel=None, titlestr=None, titlesize=12, **kwargs):
+	    colorbarLabel=None, titlestr=None, titlesize=12, rasterized=False, **kwargs):
     # It would be best if x and y were parallel arrays to vals.
     # I haven't tried to see what would happen if they were just 1-D arrays each...
     if axis is None :
@@ -37,17 +37,33 @@ def MakePPI(x, y, vals, norm, ref_table, axis=None,
     thePlot = axis.pcolor(x, y, 
 			  numpy.ma.masked_array(vals, mask=numpy.isnan(vals)),
 			  cmap=ref_table, norm=norm, **kwargs)
+    thePlot.set_rasterized(rasterized)
 
     if (titlestr is not None) : axis.set_title(titlestr, fontsize=titlesize)
     if (xlabel is not None) : axis.set_xlabel(xlabel)
     if (ylabel is not None) : axis.set_ylabel(ylabel)
 
-    # Makes the colorbar a little bit smaller than usual.
+
     if colorbar :
-        tempBar = axis.figure.colorbar(thePlot, fraction=0.05, shrink=0.92)
-	tempBar.set_label(colorbarLabel)
+        MakeRadarColorbar(thePlot, colorbarLabel)
 
     return thePlot
+
+def MakeRadarColorbar(thePlot, colorbarLabel, figure=None, cax=None) :
+    if figure is None:
+        figure = pyplot.gcf()
+
+    if cax is None :
+        # If there is no specified caxis, then the figure has to make a new one,
+        # so let's specify the parameters for it...
+        # fraction and shrink makes the colorbar a little bit smaller than usual.
+        cBar = figure.colorbar(thePlot, fraction=0.95, shrink=0.92)
+    else :
+        # There is already a caxis, so let's not play around with it...
+        cBar = figure.colorbar(thePlot, cax=cax)
+
+    cBar.set_label(colorbarLabel)
+    return cBar
 
 # Maybe this should go into MapUtils?
 def TightBounds(lons, lats, vals) :
