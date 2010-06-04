@@ -67,6 +67,7 @@ def ClusterMap(clusters, vals, indicesToShow,
 
     #  ------ Radar Background --------------
     if doRadarBG :
+        maskedVals = numpy.ma.masked_array(vals, mask=
         MakeReflectPPI(vals, lats, lons,
         	       colorbar=False, axis_labels=False, titlestr=None, axis=axis,
 		       zorder=zorders[zorderIndex], alpha=radarBG_alpha,
@@ -110,7 +111,7 @@ def ClusterMap(clusters, vals, indicesToShow,
     # this pcolor above the dimmer box.  I don't know why...
 #    MakeReflectPPI(clustVals, lats, lons, alpha=0.5, drawer=drawer, hold = True, **kwargs)
 
-
+    
     # Plot the outlines of the clusters by initializing an array with NaNs,
     # and then assigning ones to the pixels for a particular cluster.
     # Then plot the contour of this array, forcing it to use only one contour level.
@@ -154,6 +155,7 @@ def ClusterMap(clusters, vals, indicesToShow,
         tmpIM = MakeReflectPPI(clustVals, lats, lons, axis=axis, zorder=zorders[zorderIndex + 2],
 		       axis_labels=False, colorbar=False, titlestr=None, **kwargs)
         zorderIndex += 3
+    
 
 
     # Do colorbar, axis_labels, and titlestr when finished...

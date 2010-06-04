@@ -35,9 +35,12 @@ def MakePPI(x, y, vals, norm, ref_table, axis=None,
         axis = pyplot.gca()
     
     thePlot = axis.pcolor(x, y, 
-			  numpy.ma.masked_array(vals, mask=numpy.isnan(vals)),
-			  cmap=ref_table, norm=norm, **kwargs)
+    			  numpy.ma.masked_array(vals, mask=numpy.isnan(vals)),
+    			  cmap=ref_table, norm=norm, **kwargs)
     thePlot.set_rasterized(rasterized)
+#    thePlot = axis.imshow(numpy.ma.masked_array(vals, mask=numpy.isnan(vals)),
+#			  cmap=ref_table, norm=norm, origin='lower',
+#			  extent=(x.min(), x.max(), y.min(), y.max()), **kwargs)
 
     if (titlestr is not None) : axis.set_title(titlestr, fontsize=titlesize)
     if (xlabel is not None) : axis.set_xlabel(xlabel)

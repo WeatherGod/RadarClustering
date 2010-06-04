@@ -9,7 +9,7 @@ from LoadRastRadar import *		# for LoadRastRadar()
 
 from RadarPlotUtils import *		# for MakeReflectPPI(), TightBounds(), PlotMapLayers()
 
-from mpl_toolkits.axes_grid import AxesGrid
+from mpl_toolkits.axes_grid1 import AxesGrid
 from mpl_toolkits.basemap import Basemap
 import MapUtils				# for PlotMapLayers and default mapLayers structure
 import matplotlib.pyplot as pyplot
@@ -80,11 +80,11 @@ fig = pyplot.figure(figsize=(9.65, 5.0))	# should be good for 3x3 grid
 figLayout = (3, 3)
 grid = AxesGrid(fig, 111,
                 nrows_ncols = (3, 3),
-		axes_pad=0.1,
+		axes_pad=0.22,
 		cbar_mode='single',
-		cbar_pad=0.05)#, cbar_size=0.08)
+		cbar_pad=0.05, cbar_size=0.08)
 
-for figIndex, filename in enumerate(fileList[0:3]):
+for figIndex, filename in enumerate(fileList[:]):
     pathname, nameStem = os.path.split(filename)
     ax = grid[figIndex]
     #ax = fig.add_subplot(figLayout[0], figLayout[1], figIndex + 1)
@@ -110,8 +110,8 @@ for figIndex, filename in enumerate(fileList[0:3]):
     (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
     tmpIM = ClusterMap(clusters, numpy.squeeze(rastData['vals']), sortedIndicies,#len(numpy.nonzero(clustSizes >= (avgSize + 0.25*stdSize)))],
-	       doRadarBG=True, radarBG_alpha=0.10,
-               doDimmerBox=True, dimmerBox_alpha=0.20,
+	       doRadarBG=True, radarBG_alpha=1.0,
+               doDimmerBox=False, dimmerBox_alpha=0.20,
 	       axis_labels=False, colorbar=False,
 	       titlestr='U = %.2f    n = %d' % (clustParams['devsAbove'], clustParams['subClustDepth']),
 	       titlesize=10, rasterized=True,
