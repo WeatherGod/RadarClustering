@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 from optparse import OptionParser	# Command-line parsing
+import matplotlib
+matplotlib.use("Agg")	# Agg seems to be more efficient of a backend than GTKAgg for this purpose
 
 from ClusterFileUtils import *		# for GetClustDataSource(), LoadClustFile(), GetClusterSizeInfo()
 
@@ -84,7 +86,7 @@ grid = AxesGrid(fig, 111,
 		cbar_mode='single',
 		cbar_pad=0.05, cbar_size=0.08)
 
-for figIndex, filename in enumerate(fileList[:]):
+for figIndex, filename in enumerate(fileList[0:9]):
     pathname, nameStem = os.path.split(filename)
     ax = grid[figIndex]
     #ax = fig.add_subplot(figLayout[0], figLayout[1], figIndex + 1)
@@ -110,10 +112,10 @@ for figIndex, filename in enumerate(fileList[:]):
     (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
     tmpIM = ClusterMap(clusters, numpy.squeeze(rastData['vals']), sortedIndicies,#len(numpy.nonzero(clustSizes >= (avgSize + 0.25*stdSize)))],
-	       doRadarBG=True, radarBG_alpha=1.0,
-               doDimmerBox=False, dimmerBox_alpha=0.20,
+	       doRadarBG=True, radarBG_alpha=0.10,
+               doDimmerBox=True, dimmerBox_alpha=0.20,
 	       axis_labels=False, colorbar=False,
-	       titlestr='U = %.2f    n = %d' % (clustParams['devsAbove'], clustParams['subClustDepth']),
+	       titlestr='U = %.2f   n = %d' % (clustParams['devsAbove'], clustParams['subClustDepth']),
 	       titlesize=10, rasterized=True,
 	       zorder=1.0, axis=ax)
 
@@ -127,6 +129,6 @@ MakeRadarColorbar(tmpIM, "Reflectivity [dBZ]", fig, cax=grid.cbar_axes[0])
 #fig.colorbar(tmpIM, cax=grid.cbar_axes[0])
 print "Saving..."
 fig.savefig('%s%s%s_ParamDemo.%s' % (optionParams[options.runName]['destDir'], os.sep, options.runName, options.outputFormat), 
-            dpi=400, bbox_inches='tight')
+            dpi=125, bbox_inches='tight')
 
 

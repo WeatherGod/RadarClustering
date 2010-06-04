@@ -36,21 +36,23 @@ def ClusterMap(clusters, vals, indicesToShow,
 
     holdStatus = axis.ishold()
 
-    #if holdStatus :
-    #	boxBoundx = axis.get_xlim()
-    #	boxBoundy = axis.get_ylim()
-    #else :
-    boxBoundx = (min(clusters['lonAxis']), max(clusters['lonAxis']))
-    boxBoundy = (min(clusters['latAxis']), max(clusters['latAxis']))
+    if holdStatus :
+    	boxBoundx = axis.get_xlim()
+    	boxBoundy = axis.get_ylim()
+    else :
+        boxBoundx = (min(clusters['lonAxis']), max(clusters['lonAxis']))
+        boxBoundy = (min(clusters['latAxis']), max(clusters['latAxis']))
 
-    bbBoxX = [boxBoundx[0], boxBoundx[0], boxBoundx[1], boxBoundx[1]]
-    bbBoxY = [boxBoundy[0], boxBoundy[1], boxBoundy[1], boxBoundy[0]]
+    bbBoxX = (boxBoundx[0], boxBoundx[0], boxBoundx[1], boxBoundx[1])
+    bbBoxY = (boxBoundy[0], boxBoundy[1], boxBoundy[1], boxBoundy[0])
     bbBox = zip(bbBoxX, bbBoxY)
 
-    
-
-
     (lons, lats) = numpy.meshgrid(clusters['lonAxis'], clusters['latAxis'])
+    
+    domainMask = (lats < boxBoundy[0]) | (lats > boxBoundy[1]) | (lons < boxBoundx[0]) | (lons > boxBoundx[1]) | numpy.isnan(vals)
+
+
+
 
     # elementCount determines how many things are going to be displayed in this
     #    plotting function.  To start, there will be len(indicesToShow) clusters
@@ -67,8 +69,7 @@ def ClusterMap(clusters, vals, indicesToShow,
 
     #  ------ Radar Background --------------
     if doRadarBG :
-        maskedVals = numpy.ma.masked_array(vals, mask=
-        MakeReflectPPI(vals, lats, lons,
+        MakeReflectPPI(vals, lats, lons, mask=domainMask,
         	       colorbar=False, axis_labels=False, titlestr=None, axis=axis,
 		       zorder=zorders[zorderIndex], alpha=radarBG_alpha,
 		       **kwargs)
@@ -88,9 +89,8 @@ def ClusterMap(clusters, vals, indicesToShow,
 
 
     # -------- Clusters ------------
-    outlineGrid = numpy.empty_like(lons)
-    clustVals = numpy.empty_like(lons)
-#    clustVals.fill(scipy.nan)
+    clustMask = numpy.empty(vals.shape, dtype=bool)
+    #clustVals = numpy.empty_like(vals)
 
     clustMembers = [numpy.nonzero(clusters['clusterIndicies'] == clustIndx) for clustIndx in indicesToShow]
 
@@ -98,18 +98,6 @@ def ClusterMap(clusters, vals, indicesToShow,
     # cluster has a closed loop for itself (i.e. - not merged with
     # a neighboring cluster).
     print "ClustCnt:", len(indicesToShow)
-
-    # Assigning all radar values for those pixels in the clusters to clustVals,
-    # which was initialized with NaNs.  When plotted, this has the effect of plotting
-    # only the pixels that were clustered.
-#    for goodMembers in clustMembers :
-#	for goodIndx in goodMembers :
-
-    # Plot the reflectivities of *just* the clustered pixels
-    # zorder=3 helps to keep it *above* the dimmer box.
-    # Note that it seems that a zorder of 2 does not sufficiently place
-    # this pcolor above the dimmer box.  I don't know why...
-#    MakeReflectPPI(clustVals, lats, lons, alpha=0.5, drawer=drawer, hold = True, **kwargs)
 
     
     # Plot the outlines of the clusters by initializing an array with NaNs,
@@ -119,40 +107,30 @@ def ClusterMap(clusters, vals, indicesToShow,
     # pixels are still distinguishable.
     for index, goodMembers in enumerate(clustMembers) :
         # If the cluster does not exist within the bounding box, don't bother rendering it.
-	if not numpy.any(inpoly.point_inside_polygon(zip(clusters['lonAxis'][clusters['members_LonLoc'][goodMembers]],
-						         clusters['latAxis'][clusters['members_LatLoc'][goodMembers]]),
-						 bbBox)) :
+        if not numpy.any(numpy.logical_not(domainMask[clusters['members_LatLoc'][goodMembers],
+				           	      clusters['members_LonLoc'][goodMembers]])) :
             continue
 
-        outlineGrid.fill(numpy.nan)
-	clustVals.fill(numpy.nan)
+        clustMask.fill(True)
+	#clustVals.fill(numpy.nan)
 
 	# Finding all members of the cluster
-	# While this is an improvement, There has to be an easier, faster, better way...
-	#for goodIndx in goodMembers :
-	#    outlineGrid[clusters['members_LatLoc'][goodIndx], clusters['members_LonLoc'][goodIndx]] = 1
-	#    clustVals[clusters['members_LatLoc'][goodIndx],
-	#	      clusters['members_LonLoc'][goodIndx]] = vals[clusters['members_LatLoc'][goodIndx],
-	#							   clusters['members_LonLoc'][goodIndx]]
-        outlineGrid[clusters['members_LatLoc'][goodMembers],
-		    clusters['members_LonLoc'][goodMembers]] = 1
-        clustVals[clusters['members_LatLoc'][goodMembers],
-		  clusters['members_LonLoc'][goodMembers]] = vals[clusters['members_LatLoc'][goodMembers],
-								  clusters['members_LonLoc'][goodMembers]]
-        
+        clustMask[clusters['members_LatLoc'][goodMembers],
+		  clusters['members_LonLoc'][goodMembers]] = False
 
 	# Plotting the cluster (white line, black line, then reflectivity patch)
 	# This could probably be improved
-	outline = axis.contour(lons, lats, ~numpy.isnan(outlineGrid), 
-			       [0, 1, 2], colors='w', linewidths=6.0, zorder = zorders[zorderIndex])
+        # white highlight
+	outline = axis.contour(lons, lats, clustMask, 
+			       [0, 1], colors='w', linewidths=7.0, zorder = zorders[zorderIndex])
         SetContourZorder(outline, zorders[zorderIndex])
 
-        # shadow of the white line
-	outline = axis.contour(lons, lats, ~numpy.isnan(outlineGrid), 
-		       	       [0, 1, 2], colors='k', linewidths=3.0, zorder = zorders[zorderIndex + 1])
+        # black outline
+	outline = axis.contour(lons, lats, clustMask, 
+		       	       [0, 1], colors='k', linewidths=4.5, zorder = zorders[zorderIndex + 1])
         SetContourZorder(outline, zorders[zorderIndex + 1])
 
-        tmpIM = MakeReflectPPI(clustVals, lats, lons, axis=axis, zorder=zorders[zorderIndex + 2],
+        tmpIM = MakeReflectPPI(vals, lats, lons, mask=clustMask, axis=axis, zorder=zorders[zorderIndex + 2],
 		       axis_labels=False, colorbar=False, titlestr=None, **kwargs)
         zorderIndex += 3
     

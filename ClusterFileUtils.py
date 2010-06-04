@@ -1,5 +1,5 @@
 from Scientific.IO.NetCDF import *
-import scipy
+import numpy
 
 
 def LoadClustFile(filename):
@@ -9,10 +9,11 @@ def LoadClustFile(filename):
     nc = NetCDFFile(filename, 'r')
 
 
-    clusters = {'clusterIndicies': scipy.array(nc.variables['clusterIndex'].getValue()), 
-		'members_LonLoc': scipy.array(nc.variables['pixel_xLoc'].getValue()), 
-		'members_LatLoc': scipy.array(nc.variables['pixel_yLoc'].getValue()), 
-		'latAxis': nc.variables['lat'].getValue(), 'lonAxis': nc.variables['lon'].getValue()}
+    clusters = {'clusterIndicies': nc.variables['clusterIndex'].getValue(), 
+		'members_LonLoc': nc.variables['pixel_xLoc'].getValue(), 
+		'members_LatLoc': nc.variables['pixel_yLoc'].getValue(), 
+		'latAxis': nc.variables['lat'].getValue().astype(numpy.float32),
+		'lonAxis': nc.variables['lon'].getValue().astype(numpy.float32)}
 
     clustParams = {'xSize': len(clusters['lonAxis']), 'ySize': len(clusters['latAxis']), 
 		   'devsAbove': getattr(nc, 'Upper_Sensitivity')[0], 
@@ -28,18 +29,21 @@ def LoadClustFile(filename):
 
 
 def GetClustDataSource(clustFilename) :
-    return getattr(NetCDFFile(clustFilename, 'r'), 'data_source')
+    nc = NetCDFFile(clustFilename, 'r')
+    filename = getattr(nc, 'data_source')
+    nc.close()
+    return filename
 
 
 def GetClusterSizeInfo(clusters):
 
     clustCnt = max(clusters['clusterIndicies']) + 1
-    clustSizes = scipy.array([0] * clustCnt)
+    clustSizes = numpy.array([0] * clustCnt)
     for clustIndx in clusters['clusterIndicies']:
 	clustSizes[clustIndx] += 1
 
     # .argsort() sorts in ascending order, hence [::-1] to reverse it
-    sortedIndicies = scipy.argsort(clustSizes)[::-1]
+    sortedIndicies = numpy.argsort(clustSizes)[::-1]
 
     return(clustCnt, clustSizes, sortedIndicies)
 

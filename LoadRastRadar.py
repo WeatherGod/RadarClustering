@@ -1,11 +1,12 @@
 from Scientific.IO.NetCDF import *
+import numpy
 
 def LoadRastRadar(infilename) :
     nc = NetCDFFile(infilename, 'r')
     titleStr = getattr(nc, 'title').replace("Rastified", "Rasterized")
-    lats = nc.variables['lat'].getValue()
-    lons = nc.variables['lon'].getValue()
-    vals = nc.variables['value'].getValue()
+    lats = nc.variables['lat'].getValue().astype(numpy.float32)
+    lons = nc.variables['lon'].getValue().astype(numpy.float32)
+    vals = nc.variables['value'].getValue().astype(numpy.float32)
     timestamp = nc.variables['time'].getValue()[0]
 
     nc.close()

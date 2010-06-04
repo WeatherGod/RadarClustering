@@ -19,23 +19,26 @@ colorInfo = {'ref_table': ref_table,
 def MakeReflectPPI(vals, lats, lons, axis_labels=True, **kwargs) :
 # The Lats and Lons should be parallel arrays to vals.
 
-    if axis_labels : kwargs.update(xlabel="Longitude", ylabel="Latitude")
+    if axis_labels : kwargs.update(xlabel="Longitude [deg]", ylabel="Latitude [deg]")
     kwargs.setdefault('colorbarLabel', 'Reflectivity [dBZ]')
 
     return MakePPI(lons, lats, vals, colorInfo['norm'], colorInfo['ref_table'], **kwargs)
 
 
 
-def MakePPI(x, y, vals, norm, ref_table, axis=None,
+def MakePPI(x, y, vals, norm, ref_table, axis=None, mask=None,
 	    xlabel=None, ylabel=None, colorbar=True, 
 	    colorbarLabel=None, titlestr=None, titlesize=12, rasterized=False, **kwargs):
     # It would be best if x and y were parallel arrays to vals.
     # I haven't tried to see what would happen if they were just 1-D arrays each...
     if axis is None :
         axis = pyplot.gca()
+
+    if mask is None :
+        mask = numpy.isnan(vals)
     
-    thePlot = axis.pcolor(x, y, 
-    			  numpy.ma.masked_array(vals, mask=numpy.isnan(vals)),
+    thePlot = axis.pcolor(x, y,
+    			  numpy.ma.masked_array(vals, mask=mask),
     			  cmap=ref_table, norm=norm, **kwargs)
     thePlot.set_rasterized(rasterized)
 #    thePlot = axis.imshow(numpy.ma.masked_array(vals, mask=numpy.isnan(vals)),
