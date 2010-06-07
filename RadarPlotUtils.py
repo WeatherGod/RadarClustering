@@ -27,7 +27,7 @@ def MakeReflectPPI(vals, lats, lons, axis_labels=True, **kwargs) :
 
 
 def MakePPI(x, y, vals, norm, ref_table, axis=None, mask=None,
-	    xlabel=None, ylabel=None, colorbar=True, 
+	    xlabel=None, ylabel=None, labelsize=10, colorbar=True, 
 	    colorbarLabel=None, titlestr=None, titlesize=12, rasterized=False, **kwargs):
     # It would be best if x and y were parallel arrays to vals.
     # I haven't tried to see what would happen if they were just 1-D arrays each...
@@ -45,9 +45,9 @@ def MakePPI(x, y, vals, norm, ref_table, axis=None, mask=None,
 #			  cmap=ref_table, norm=norm, origin='lower',
 #			  extent=(x.min(), x.max(), y.min(), y.max()), **kwargs)
 
-    if (titlestr is not None) : axis.set_title(titlestr, fontsize=titlesize)
-    if (xlabel is not None) : axis.set_xlabel(xlabel)
-    if (ylabel is not None) : axis.set_ylabel(ylabel)
+    if (titlestr is not None) : axis.set_title(titlestr, size=titlesize)
+    if (xlabel is not None) : axis.set_xlabel(xlabel, size=labelsize)
+    if (ylabel is not None) : axis.set_ylabel(ylabel, size=labelsize)
 
 
     if colorbar :

@@ -25,110 +25,96 @@ import os		# for os.sep.join(), os.path.split(), os.path.splitext(), os.makedirs
 
 
 parser = OptionParser()
-parser.add_option("-r", "--run", dest="runName",
-		  help="Generate cluster images for RUNNAME", metavar="RUNNAME")
+parser.add_option("-r", "--runs", dest="runNames", action="append", type="string",
+		  help="Generate cluster images for RUNNAMEs", metavar="RUNNAME", default=[])
 parser.add_option("-p", "--path", dest="pathName",
 		  help="PATHNAME for cluster files and radar data", metavar="PATHNAME", default='.')
 parser.add_option("-t", "--test", dest="isTest", action="store_true",
-                  help="If set, files will be saved in current directory as 'tempy*.png'", default=False)
+                  help="If set, files will be saved in current directory", default=False)
 parser.add_option("-f", "--format", dest="outputFormat",
 		  help="FORMAT for output file", metavar="FORMAT", default='pdf')
 
 (options, args) = parser.parse_args()
 
-if (options.runName == None) :
-    parser.error("Missing RUNNAME")
+if len(options.runNames) == 0 :
+    parser.error("Missing RUNNAMEs")
 
 
 
-print "The runName:", options.runName
+print "The runNames:", options.runNames
 
 optionParams = {}
 optionParams['WSR'] = {'runName': 'Test_WSR_Params',
 			   'domain': (38.0, -100.0, 40.0, -96.0),
-			   'destDir': '../../Documents'}
+			   'destDir': '../../Documents/SPA'}
 
 optionParams['NWRT'] = {'runName': 'Test_NWRT_Params',
                         'domain': (35.5, -100.0, 37.0, -97.0),
                         'destDir': '../../Documents/SPA'}
 
+for runName in options.runNames :
+    params = optionParams[runName]
+    print "Curr RunName:", runName
 
-fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', optionParams[options.runName]['runName'], '*.nc']))
-if (len(fileList) == 0) : print "WARNING: No files found for run '" + options.runName + "'!"
-fileList.sort()
+    fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', params['runName'], '*.nc']))
+    if (len(fileList) < 9) : print "WARNING: Not enough files found for run '" + runName + "'!"
+    fileList.sort()
 
-if options.isTest :
-   optionParams[options.runName]['destDir'] = '.'
+    if options.isTest :
+        params['destDir'] = '.'
 
-# AMS_Params: [-100.0, -96.0], [38.0, 40.0]
-(minLat, minLon, maxLat, maxLon) = optionParams[options.runName]['domain']
+    (minLat, minLon, maxLat, maxLon) = params['domain']
 
+    # Map display options
+    mapLayers = MapUtils.mapLayers
 
+    # Map domain
+    map = Basemap(projection='cyl', resolution='i', suppress_ticks=True, fix_aspect=False,
+				    llcrnrlat = minLat, llcrnrlon = minLon,
+				    urcrnrlat = maxLat, urcrnrlon = maxLon)
 
-# Map display options
-mapLayers = MapUtils.mapLayers
-
-# Map domain
-map = Basemap(projection='cyl', resolution='i', suppress_ticks=True, fix_aspect=False,
-				llcrnrlat = minLat, llcrnrlon = minLon,
-				urcrnrlat = maxLat, urcrnrlon = maxLon)
-
-print minLat, minLon, maxLat, maxLon
-# Looping over all of the desired cluster files
+    print minLat, minLon, maxLat, maxLon
+    # Looping over all of the desired cluster files
 
 
-#fig = pyplot.figure(figsize=(5.0, 9.65))	# should be good for 3x3 grid
-fig = pyplot.figure(figsize=(9.65, 5.0))	# should be good for 3x3 grid
-figLayout = (3, 3)
-grid = AxesGrid(fig, 111,
-                nrows_ncols = (3, 3),
-		axes_pad=0.22,
-		cbar_mode='single',
-		cbar_pad=0.05, cbar_size=0.08)
+    fig = pyplot.figure(figsize=(9.65, 5.0))	# should be good for 3x3 grid
+    figLayout = (3, 3)
+    grid = AxesGrid(fig, 111,
+                    nrows_ncols = (3, 3),
+		    axes_pad=0.22,
+		    cbar_mode='single',
+		    cbar_pad=0.05, cbar_size=0.08)
 
-for figIndex, filename in enumerate(fileList[0:9]):
-    pathname, nameStem = os.path.split(filename)
-    ax = grid[figIndex]
-    #ax = fig.add_subplot(figLayout[0], figLayout[1], figIndex + 1)
+    for figIndex, filename in enumerate(fileList[0:9]):
+        pathname, nameStem = os.path.split(filename)
+        ax = grid[figIndex]
+        #ax = fig.add_subplot(figLayout[0], figLayout[1], figIndex + 1)
 
-    MapUtils.PlotMapLayers(map, mapLayers, axis=ax)
+        MapUtils.PlotMapLayers(map, mapLayers, axis=ax)
     
+        (clustParams, clusters) = LoadClustFile(filename)
+        rastData = LoadRastRadar(os.sep.join([options.pathName, clustParams['dataSource']]))
+        rastData['vals'][rastData['vals'] < 0.0] = numpy.nan
 
-#    ax.set_aspect('auto')
+        (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
-    (clustParams, clusters) = LoadClustFile(filename)
-    rastData = LoadRastRadar(os.sep.join([options.pathName, clustParams['dataSource']]))
-    rastData['vals'][rastData['vals'] < 0.0] = numpy.nan
+        tmpIM = ClusterMap(clusters, numpy.squeeze(rastData['vals']), sortedIndicies,
+	                   doRadarBG=True, radarBG_alpha=0.10,
+                           doDimmerBox=True, dimmerBox_alpha=0.20,
+	                   axis_labels=False, colorbar=False,
+	                   titlestr='U = %.2f   n = %d' % (clustParams['devsAbove'], clustParams['subClustDepth']),
+	                   titlesize=10, rasterized=True,
+	                   zorder=1.0, axis=ax)
 
-    # Plotting the full reflectivity image, with significant transparency (alpha=0.25).
-    # This plot will get 'dimmed' by the later ClusterMap().
-    # zorder=1 so that it is above the Map Layers.
-    #MakeReflectPPI(numpy.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
-    #		   colorbar=False, axis_labels=False, axis=ax, zorder=1, alpha=0.15,
-    #		   titlestr = "U = %.2f     n = %d" % (clustParams['devsAbove'], clustParams['subClustDepth']),
-    #		   titlesize = 16, rasterized=True)
-    
-    
-    (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
-    tmpIM = ClusterMap(clusters, numpy.squeeze(rastData['vals']), sortedIndicies,#len(numpy.nonzero(clustSizes >= (avgSize + 0.25*stdSize)))],
-	       doRadarBG=True, radarBG_alpha=0.10,
-               doDimmerBox=True, dimmerBox_alpha=0.20,
-	       axis_labels=False, colorbar=False,
-	       titlestr='U = %.2f   n = %d' % (clustParams['devsAbove'], clustParams['subClustDepth']),
-	       titlesize=10, rasterized=True,
-	       zorder=1.0, axis=ax)
+    MakeRadarColorbar(tmpIM, "Reflectivity [dBZ]", fig, cax=grid.cbar_axes[0]) 
+    #fig.colorbar(tmpIM, cax=grid.cbar_axes[0])
+    print "Saving..."
+    fig.savefig('%s%s%s_ParamDemo.%s' % (params['destDir'], os.sep, runName, options.outputFormat), 
+                dpi=125, bbox_inches='tight')
 
-    # Makes sure that the axes gets the proper limits as originally set by the Basemap.
-
-    #map.set_axes_limits(ax=ax)
-    #ax.set_xlim((minLon, maxLon))
-    #ax.set_ylim((minLat, maxLat))
-
-MakeRadarColorbar(tmpIM, "Reflectivity [dBZ]", fig, cax=grid.cbar_axes[0]) 
-#fig.colorbar(tmpIM, cax=grid.cbar_axes[0])
-print "Saving..."
-fig.savefig('%s%s%s_ParamDemo.%s' % (optionParams[options.runName]['destDir'], os.sep, options.runName, options.outputFormat), 
-            dpi=125, bbox_inches='tight')
+    # Need to make sure that memory usage doesn't go out of control...
+    fig.clf()
+    del fig
 
 

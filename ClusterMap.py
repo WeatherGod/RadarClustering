@@ -7,7 +7,8 @@ from RadarPlotUtils import MakeReflectPPI
 def ClusterMap(clusters, vals, indicesToShow,
 	       doRadarBG=True, doDimmerBox=True,
 	       radarBG_alpha=0.15, dimmerBox_alpha=0.25,
-	       colorbar=False, titlestr=None, titlesize=12, axis_labels=False,
+	       colorbar=False, titlestr=None, titlesize=12,
+	       axis_labels=False, labelsize=10,
 	       zorder=0, axis=None, **kwargs):
     """
     Plot the clusters of the radar reflectivities in a really cool way.
@@ -141,8 +142,8 @@ def ClusterMap(clusters, vals, indicesToShow,
         axis.set_title(titlestr, fontsize=titlesize)
 
     if axis_labels :
-        axis.set_xlabel('Longitude [deg]')
-        axis.set_ylabel('Latitude [deg]')
+        axis.set_xlabel('Longitude [deg]', fontsize=labelsize)
+        axis.set_ylabel('Latitude [deg]', fontsize=labelsize)
 
     # FIXME: This won't work right...
     if colorbar :
