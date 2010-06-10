@@ -98,16 +98,14 @@ for runName in options.runNames :
 
         (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
-        tmpIM = ClusterMap(clusters, numpy.squeeze(rastData['vals']), sortedIndicies,
-	                   doRadarBG=True, radarBG_alpha=0.10,
-                           doDimmerBox=True, dimmerBox_alpha=0.20,
-	                   axis_labels=False, colorbar=False,
-	                   titlestr='U = %.2f   n = %d' % (clustParams['devsAbove'], clustParams['subClustDepth']),
-	                   titlesize=10, rasterized=True,
-	                   zorder=1.0, axis=ax)
+        ClusterMap(clusters, numpy.squeeze(rastData['vals']), sortedIndicies,
+	           radarBG_alpha=0.10, dimmerBox_alpha=0.20,
+	           rasterized=True,
+	           zorder=1.0, axis=ax)
 
+        ax.set_title('U = %.2f   n = %d' % (clustParams['devsAbove'], clustParams['subClustDepth']), fontsize=10)
 
-    MakeRadarColorbar(tmpIM, "Reflectivity [dBZ]", fig, cax=grid.cbar_axes[0]) 
+    MakeReflectColorbar(grid.cbar_axes[0]) 
     #fig.colorbar(tmpIM, cax=grid.cbar_axes[0])
     print "Saving..."
     fig.savefig('%s%s%s_ParamDemo.%s' % (params['destDir'], os.sep, runName, options.outputFormat), 

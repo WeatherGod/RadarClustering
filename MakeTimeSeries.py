@@ -96,18 +96,16 @@ for runName in options.runNames :
 
         (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
-        tmpIM = ClusterMap(clusters, numpy.squeeze(rastData['vals']), sortedIndicies,
-                   doRadarBG=True, radarBG_alpha=0.10,
-		   doDimmerBox=True, dimmerBox_alpha=0.20,
-	           axis_labels=False, colorbar=False,
-		   titlestr=datetime.datetime.utcfromtimestamp(rastData['scan_time']).strftime('%Y/%m/%d  %H:%M:%S'),
-	           titlesize=None, rasterized=True,
+        ClusterMap(clusters, numpy.squeeze(rastData['vals']), sortedIndicies,
+                   radarBG_alpha=0.10, dimmerBox_alpha=0.20,
+	           rasterized=True,
                    zorder = 1.0, axis=ax)
     
+        ax.set_title(datetime.datetime.utcfromtimestamp(rastData['scan_time']).strftime('%Y/%m/%d  %H:%M:%S'))
     	# Neat trick to have only the outer parts of the subplots get axis labels...
         #ax.label_outer()
 
-    MakeRadarColorbar(tmpIM, "Reflectivity [dBZ]", fig, cax=grid.cbar_axes[0])
+    MakeReflectColorbar(grid.cbar_axes[0])
     print "Saving..."
     fig.savefig('%s%s%s_TimeSeries.%s' % (params['destDir'], os.sep, runName, options.outputFormat),
 		dpi=125, bbox_inches='tight')

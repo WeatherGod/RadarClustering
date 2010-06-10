@@ -10,7 +10,8 @@ from LoadRastRadar import *		# for LoadRastRadar()
 from RadarPlotUtils import *		# for MakeReflectPPI(), TightBounds(), PlotMapLayers()
 
 from mpl_toolkits.basemap import Basemap
-import pylab
+import MapUtils
+import matplotlib.pyplot as pyplot
 import numpy
 
 import glob		# for filename globbing
@@ -60,7 +61,7 @@ parser.add_option("-p", "--path", dest="pathName",
 
 (options, args) = parser.parse_args()
 
-if (options.runName == None) :
+if (options.runName is None) :
     parser.error("Missing RUNNAME")
 
 
@@ -84,10 +85,7 @@ fileList.sort()
 
 
 # Map display options
-mapLayers = [['states', {'linewidth':1.5, 'color':'k', 'zorder':0}], 
-	     ['counties', {'linewidth':0.5, 'color':'k', 'zorder':0}],
-	     ['rivers', {'linewidth':0.5, 'color':'b', 'zorder':0}],
-	     ['roads', {'linewidth':0.75, 'color':'r', 'zorder':0}]]
+mapLayers = MapUtils.mapLayers
 
 
 # Map domain
@@ -102,10 +100,9 @@ print minLat, minLon, maxLat, maxLon
 for filename in fileList :
     (pathname, nameStem) = os.path.split(filename)
     (nameStem, nameExt) = os.path.splitext(nameStem)
-    
-    PlotMapLayers(map, mapLayers)
-
-    pylab.hold(True)
+    fig = pyplot.figure()
+    ax = fig.gca()
+    MapUtils.PlotMapLayers(map, mapLayers, ax)
     
     (clustParams, clusters) = LoadClustFile(filename)
     rastData = LoadRastRadar(os.sep.join([options.pathName, clustParams['dataSource']]))
@@ -114,22 +111,21 @@ for filename in fileList :
     # Plotting the full reflectivity image, with significant transparency (alpha=0.25).
     # This plot will get 'dimmed' by the later ClusterMap().
     # zorder=1 so that it is above the Map Layers.
-    MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
-		   alpha=0.15, drawer=map, zorder=1, titlestr=rastData['title'], colorbar=False, axis_labels=False)
-    #pylab.hold(True)
-    
+#    MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
+#		   alpha=0.15, axis=ax, zorder=1, titlestr=rastData['title'], colorbar=False, axis_labels=False)
+        
     (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
     ClusterMap(clusters,pylab.squeeze(rastData['vals']), sortedIndicies,#len(pylab.find(clustSizes >= (avgSize + 0.25*stdSize)))],
-	       axis_labels=False, colorbar=False, zorder = 2.0, drawer=map)
-    pylab.hold(False)
-
+	       radarBG_alpha=0.15, zorder = 1.0, axis=ax)
+    
     if (not os.path.exists(os.sep.join(['PPI', options.runName]))) :
         os.makedirs(os.sep.join(['PPI', options.runName]))
 
     outfile = os.sep.join(['PPI', options.runName, nameStem + '_clust.png'])
-    pylab.savefig(outfile)
-    pylab.clf()
+    fig.savefig(outfile)
+    fig.clf()
+    del fig
 
 
 
