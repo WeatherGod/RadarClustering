@@ -43,10 +43,10 @@ boxBoundx = ax.get_xlim()
 boxBoundy = ax.get_ylim()
 
 MakeReflectPPI(pylab.squeeze(rastData['vals']), latGrid, lonGrid,
-               zorder=1, titlestr=rastData['title'], rasterized=rasterized, axis=ax)
+               rasterized=rasterized, axis=ax)
 
-#ax.set_xlim(boxBoundx)
-#ax.set_ylim(boxBoundy)
+ax.set_xlim(boxBoundx)
+ax.set_ylim(boxBoundy)
 
 ax = fig.add_subplot(1, 2, 2)
 MapUtils.PlotMapLayers(map, mapLayers, ax)

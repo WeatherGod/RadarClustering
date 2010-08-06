@@ -1,13 +1,13 @@
-from Scientific.IO.NetCDF import *
 import numpy
+from scipy.io import netcdf
 
 def LoadRastRadar(infilename) :
-    nc = NetCDFFile(infilename, 'r')
-    titleStr = getattr(nc, 'title').replace("Rastified", "Rasterized")
-    lats = nc.variables['lat'].getValue().astype(numpy.float32)
-    lons = nc.variables['lon'].getValue().astype(numpy.float32)
-    vals = nc.variables['value'].getValue().astype(numpy.float32)
-    timestamp = nc.variables['time'].getValue()[0]
+    nc = netcdf.netcdf_file(infilename, 'r')
+    titleStr = (nc.title).replace("Rastified", "Rasterized")
+    lats = nc.variables['lat'][:].astype(numpy.float32)
+    lons = nc.variables['lon'][:].astype(numpy.float32)
+    vals = nc.variables['value'][:].astype(numpy.float32)
+    timestamp = nc.variables['time'][0]
 
     nc.close()
 
