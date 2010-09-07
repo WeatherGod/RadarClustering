@@ -5,16 +5,17 @@ import os				# for os.sep and os.path
 import pylab			# for pylab.find(), pylab.squeeze()
 import numpy			# for numpy.unique(), numpy.array(), numpy.average()
 
-import sys	
-sys.path.append("../Tracking/")
-from TrackFileUtils import SaveCorners
-
 
 from ClusterFileUtils import LoadClustFile
 from LoadRastRadar import LoadRastRadar
 from RadarRastify import GreatCircleDist, Bearing
 import radarsites as radar
 
+import sys	
+sys.path.append("../Tracking/")
+import TrackFileUtils
+import TrackUtils
+import ParamUtils
 
 parser = argparse.ArgumentParser("Convert a cluster file into a corner file")
 parser.add_argument("-r", "--run", dest = "runName",
@@ -27,9 +28,11 @@ args = parser.parse_args()
 if args.runName is None :
     parser.error("Missing RUNNAME")
 
-fileList = glob.glob(os.sep.join([args.pathName, 'ClustInfo', args.runName, '*.nc']))
+runLoc = args.pathName + os.sep + 'ClustInfo' + os.sep + args.runName
+fileList = glob.glob(runLoc + os.sep + '*.nc')
 if (len(fileList) == 0) : print "WARNING: No files found for run '" + args.runName + "'!"
 fileList.sort()
+
 
 # TODO: Temporary!!
 radarName = "PAR"
@@ -39,19 +42,22 @@ cornerID = 0
 
 for frameNum, filename in enumerate(fileList) :
     (clustParams, clusters) = LoadClustFile(filename)
-    rastData = pylab.squeeze(LoadRastRadar(os.sep.join([args.pathName, clustParams['dataSource']]))['vals'])
 
+    # Get rasterized reflectivity data
+    rastData = numpy.squeeze(LoadRastRadar(args.pathName + os.sep + clustParams['dataSource'])['vals'])
+    # Get site info
     radarSite = radar.ByName(radarName, radar.Sites)[0]
-
+    # Get cluster info
     clustMembers = [pylab.find(clusters['clusterIndicies'] == clustIndx) for clustIndx in numpy.unique(clusters['clusterIndicies'])]
 
-    # Now, we gotta merge this information...
-    # Starting with initializing the volume object.
-    aVol = {'volTime': frameNum, 'stormCells': []}
+    xCentroids = []
+    yCentroids = []
+    idCentroids = []
 
+    # Now, we gotta merge this information...
     for aClust in clustMembers :
         locs = numpy.array([[clusters['members_LatLoc'][goodIndx],
-		             clusters['members_LonLoc'][goodIndx]] for goodIndx in aClust])
+                             clusters['members_LonLoc'][goodIndx]] for goodIndx in aClust])
         clustVals = [rastData[latLoc, lonLoc] for latLoc, lonLoc in locs]
 
         # We have everything in Lat/Lon... we need to convert to cartesian
@@ -65,11 +71,14 @@ for frameNum, filename in enumerate(fileList) :
         yLocs = dists * numpy.cos(bearings) / 1000.0
 
         # Now find the Center of Mass.
-        yLoc = numpy.average(yLocs, weights = clustVals)
-        xLoc = numpy.average(xLocs, weights = clustVals)
-        
-        aVol['stormCells'].append({'xLocs': xLoc, 'yLocs': yLoc, 'cornerIDs': cornerID})
+        yCentroids.append(numpy.average(yLocs, weights=clustVals))
+        xCentroids.append(numpy.average(xLocs, weights=clustVals))
+        idCentroids.append(cornerID)
         cornerID += 1
+
+    # Starting with initializing the volume object.
+    aVol = {'volTime': frameNum, 'stormCells': numpy.array(zip(xCentroids, yCentroids, idCentroids),
+                                                           dtype=TrackUtils.corner_dtype)}
 
     # Then build up the volume info
     volume_data.append(aVol)
@@ -77,7 +86,27 @@ for frameNum, filename in enumerate(fileList) :
 
 
 if len(volume_data) != 0 :
-    SaveCorners(os.sep.join([args.pathName, 'ClustInfo', args.runName, 'InputDataFile']),
-				       os.sep.join([args.pathName, 'ClustInfo', args.runName, 'corner']),
-				       len(volume_data), volume_data)
+
+    simParams = dict()
+    simParams.update(ParamUtils.simDefaults)
+    simParams.update(ParamUtils.trackerDefaults)
+
+    xLims, yLims, tLims = TrackUtils.DomainFromVolumes(volume_data)
+
+    simParams['xLims'] = xLims
+    simParams['yLims'] = yLims
+    simParams['tLims'] = tLims
+
+    # These parameters are irrelevant.
+    simParams.pop('seed')
+    simParams.pop('totalTracks')
+    simParams.pop('endTrackProb')
+    simParams.pop('simConfFile')
+
+    simParams['simName'] = args.runName
+    TrackFileUtils.SaveCorners(runLoc + os.sep + simParams['inputDataFile'],
+                               simParams['simName'] + os.sep + simParams['corner_file'],
+                               volume_data,
+                               args.pathName + os.sep + 'ClustInfo')
+    ParamUtils.SaveConfigFile(runLoc + os.sep + 'simParams.conf', simParams)
 
