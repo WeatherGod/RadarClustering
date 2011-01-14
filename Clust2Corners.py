@@ -17,11 +17,12 @@ import TrackFileUtils
 import TrackUtils
 import ParamUtils
 
-parser = argparse.ArgumentParser("Convert a cluster file into a corner file")
+parser = argparse.ArgumentParser(description="Convert a cluster file into a corner file")
 parser.add_argument("-r", "--run", dest = "runName",
 		  help = "Generate corner files for RUNNAME", metavar="RUNNAME")
 parser.add_argument("-p", "--path", dest="pathName",
-		  help = "PATHNAME for cluster files and radar data", metavar="PATHNAME", default=".")
+		  help = "PATHNAME for cluster files and radar data. Default: %(default)s",
+          metavar="PATHNAME", default=".")
 
 args = parser.parse_args()
 
@@ -30,6 +31,7 @@ if args.runName is None :
 
 runLoc = args.pathName + os.sep + 'ClustInfo' + os.sep + args.runName
 fileList = glob.glob(runLoc + os.sep + '*.nc')
+print "Run Location:", runLoc
 if (len(fileList) == 0) : print "WARNING: No files found for run '" + args.runName + "'!"
 fileList.sort()
 
@@ -39,6 +41,7 @@ radarName = "PAR"
 
 volume_data = []
 cornerID = 0
+startTime = None
 
 for frameNum, filename in enumerate(fileList) :
     (clustParams, clusters) = LoadClustFile(filename)
@@ -49,6 +52,9 @@ for frameNum, filename in enumerate(fileList) :
     radarSite = radar.ByName(radarName, radar.Sites)[0]
     # Get cluster info
     clustMembers = [pylab.find(clusters['clusterIndicies'] == clustIndx) for clustIndx in numpy.unique(clusters['clusterIndicies'])]
+
+    if startTime is None :
+        startTime = clustParams['scantime']
 
     xCentroids = []
     yCentroids = []
@@ -77,8 +83,9 @@ for frameNum, filename in enumerate(fileList) :
         cornerID += 1
 
     # Starting with initializing the volume object.
-    aVol = {'volTime': frameNum, 'stormCells': numpy.array(zip(xCentroids, yCentroids, idCentroids),
-                                                           dtype=TrackUtils.corner_dtype)}
+    aVol = {'volTime': (clustParams['scantime'] - startTime) / 60.0,
+            'stormCells': numpy.array(zip(xCentroids, yCentroids, idCentroids),
+                                      dtype=TrackUtils.corner_dtype)}
 
     # Then build up the volume info
     volume_data.append(aVol)
@@ -96,17 +103,19 @@ if len(volume_data) != 0 :
     simParams['xLims'] = xLims
     simParams['yLims'] = yLims
     simParams['tLims'] = tLims
+    simParams['frameCnt'] = len(volume_data)
 
     # These parameters are irrelevant.
     simParams.pop('seed')
     simParams.pop('totalTracks')
     simParams.pop('endTrackProb')
     simParams.pop('simConfFile')
+    simParams.pop('analysis_stem')
 
     simParams['simName'] = args.runName
     TrackFileUtils.SaveCorners(runLoc + os.sep + simParams['inputDataFile'],
-                               simParams['simName'] + os.sep + simParams['corner_file'],
+                               simParams['corner_file'],
                                volume_data,
-                               args.pathName + os.sep + 'ClustInfo')
+                               path=runLoc)
     ParamUtils.SaveConfigFile(runLoc + os.sep + 'simParams.conf', simParams)
 
