@@ -11,11 +11,11 @@ from LoadRastRadar import LoadRastRadar
 from RadarRastify import GreatCircleDist, Bearing
 import radarsites as radar
 
-import sys	
-sys.path.append("../Tracking/")
-import TrackFileUtils
-import TrackUtils
-import ParamUtils
+#import sys	
+#sys.path.append("../Tracking/")
+import ZigZag.TrackFileUtils as TrackFileUtils
+import ZigZag.TrackUtils as TrackUtils
+import ZigZag.ParamUtils as ParamUtils
 
 parser = argparse.ArgumentParser(description="Convert a cluster file into a corner file")
 parser.add_argument("-r", "--run", dest = "runName",
