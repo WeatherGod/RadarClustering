@@ -2,7 +2,6 @@ import matplotlib       # for colors.BoundaryNorm()
 import numpy		# using .ma for Masked Arrays, also for .isnan()
 import matplotlib.pyplot as pyplot
 import ctables		# for color table for reflectivities
-import os		# for various filepath-related tasks
 
 
 def MakePPI(x, y, vals, norm, ref_table, axis=None, mask=None, 
