@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse         # for command-line parsing
 import glob				# for filename globbing
-import os				# for os.sep and os.path
+import os.path
 import pylab			# for pylab.find(), pylab.squeeze()
 import numpy			# for numpy.unique(), numpy.array(), numpy.average()
 
@@ -29,8 +29,8 @@ args = parser.parse_args()
 if args.runName is None :
     parser.error("Missing RUNNAME")
 
-runLoc = args.pathName + os.sep + 'ClustInfo' + os.sep + args.runName
-fileList = glob.glob(runLoc + os.sep + '*.nc')
+runLoc = os.path.join(args.pathName, 'ClustInfo', args.runName)
+fileList = glob.glob(os.path.join(runLoc, '*.nc'))
 print "Run Location:", runLoc
 if (len(fileList) == 0) : print "WARNING: No files found for run '" + args.runName + "'!"
 fileList.sort()
@@ -47,7 +47,7 @@ for frameNum, filename in enumerate(fileList) :
     (clustParams, clusters) = LoadClustFile(filename)
 
     # Get rasterized reflectivity data
-    rastData = numpy.squeeze(LoadRastRadar(args.pathName + os.sep + clustParams['dataSource'])['vals'])
+    rastData = numpy.squeeze(LoadRastRadar(os.path.join(args.pathName, clustParams['dataSource']))['vals'])
     # Get site info
     radarSite = radar.ByName(radarName, radar.Sites)[0]
     # Get cluster info
@@ -84,6 +84,7 @@ for frameNum, filename in enumerate(fileList) :
 
     # Starting with initializing the volume object.
     aVol = {'volTime': (clustParams['scantime'] - startTime) / 60.0,
+            'frameNum': frameNum,
             'stormCells': numpy.array(zip(xCentroids, yCentroids, idCentroids),
                                       dtype=TrackUtils.corner_dtype)}
 
@@ -113,9 +114,9 @@ if len(volume_data) != 0 :
     simParams.pop('analysis_stem')
 
     simParams['simName'] = args.runName
-    TrackFileUtils.SaveCorners(runLoc + os.sep + simParams['inputDataFile'],
+    TrackFileUtils.SaveCorners(os.path.join(runLoc, simParams['inputDataFile']),
                                simParams['corner_file'],
                                volume_data,
                                path=runLoc)
-    ParamUtils.SaveConfigFile(runLoc + os.sep + 'simParams.conf', simParams)
+    ParamUtils.SaveConfigFile(os.path.join(runLoc, 'simParams.conf'), simParams)
 
