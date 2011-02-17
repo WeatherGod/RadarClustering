@@ -99,7 +99,7 @@ if len(volume_data) != 0 :
     simParams.update(ParamUtils.simDefaults)
     simParams.update(ParamUtils.trackerDefaults)
 
-    xLims, yLims, tLims = TrackUtils.DomainFromVolumes(volume_data)
+    xLims, yLims, tLims, frameLims = TrackUtils.DomainFromVolumes(volume_data)
 
     simParams['xLims'] = xLims
     simParams['yLims'] = yLims
