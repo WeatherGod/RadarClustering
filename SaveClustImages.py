@@ -51,81 +51,81 @@ def ConsistentDomain(fileList, filepath) :
 
 
 
-
-parser = OptionParser()
-parser.add_option("-r", "--run", dest="runName",
-		  help="Generate cluster images for RUNNAME", metavar="RUNNAME")
-parser.add_option("-p", "--path", dest="pathName",
-		  help="PATHNAME for cluster files and radar data", metavar="PATHNAME", default='.')
-
-
-(options, args) = parser.parse_args()
-
-if (options.runName is None) :
-    parser.error("Missing RUNNAME")
+if __name__ == '__main__' :
+    parser = OptionParser()
+    parser.add_option("-r", "--run", dest="runName",
+              help="Generate cluster images for RUNNAME", metavar="RUNNAME")
+    parser.add_option("-p", "--path", dest="pathName",
+              help="PATHNAME for cluster files and radar data", metavar="PATHNAME", default='.')
 
 
+    (options, args) = parser.parse_args()
 
-print "The runName:", options.runName
-
-
-fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', options.runName, '*.nc']))
-if (len(fileList) == 0) : print "WARNING: No files found for run '" + options.runName + "'!"
-fileList.sort()
-
-    # PARRun: [-101, -97], [35, 38.5]
-    # AMS_TimeSeries: [-98.5, -93.5], [35.5, 40]
-    # AMS_Params: [-100.0, -96.0], [38.0, 40.0]
-
-#(minLat, minLon, maxLat, maxLon) = (38.0, -100.0, 40.0, -96.0)
-#(minLat, minLon, maxLat, maxLon) = (35.5, -98.5, 40.0, -93.5)
-
-# Getting a consistent domain over series of images
-(minLat, minLon, maxLat, maxLon) = ConsistentDomain(fileList, options.pathName)
+    if (options.runName is None) :
+        parser.error("Missing RUNNAME")
 
 
-# Map display options
-mapLayers = MapUtils.mapLayers
+
+    print "The runName:", options.runName
 
 
-# Map domain
-map = Basemap(projection='cyl', resolution='i', suppress_ticks=False,
-				llcrnrlat = minLat, llcrnrlon = minLon,
-				urcrnrlat = maxLat, urcrnrlon = maxLon)
+    fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', options.runName, '*.nc']))
+    if (len(fileList) == 0) : print "WARNING: No files found for run '" + options.runName + "'!"
+    fileList.sort()
 
-print minLat, minLon, maxLat, maxLon
+        # PARRun: [-101, -97], [35, 38.5]
+        # AMS_TimeSeries: [-98.5, -93.5], [35.5, 40]
+        # AMS_Params: [-100.0, -96.0], [38.0, 40.0]
 
-# Looping over all of the desired cluster files
+    #(minLat, minLon, maxLat, maxLon) = (38.0, -100.0, 40.0, -96.0)
+    #(minLat, minLon, maxLat, maxLon) = (35.5, -98.5, 40.0, -93.5)
 
-for filename in fileList :
-    (pathname, nameStem) = os.path.split(filename)
-    (nameStem, nameExt) = os.path.splitext(nameStem)
-    fig = pyplot.figure()
-    ax = fig.gca()
-    MapUtils.PlotMapLayers(map, mapLayers, ax)
-    
-    (clustParams, clusters) = LoadClustFile(filename)
-    rastData = LoadRastRadar(os.sep.join([options.pathName, clustParams['dataSource']]))
-    rastData['vals'][rastData['vals'] < 0.0] = numpy.nan
+    # Getting a consistent domain over series of images
+    (minLat, minLon, maxLat, maxLon) = ConsistentDomain(fileList, options.pathName)
 
-    # Plotting the full reflectivity image, with significant transparency (alpha=0.25).
-    # This plot will get 'dimmed' by the later ClusterMap().
-    # zorder=1 so that it is above the Map Layers.
-#    MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
-#		   alpha=0.15, axis=ax, zorder=1, titlestr=rastData['title'], colorbar=False, axis_labels=False)
+
+    # Map display options
+    mapLayers = MapUtils.mapLayers
+
+
+    # Map domain
+    map = Basemap(projection='cyl', resolution='i', suppress_ticks=False,
+                    llcrnrlat = minLat, llcrnrlon = minLon,
+                    urcrnrlat = maxLat, urcrnrlon = maxLon)
+
+    print minLat, minLon, maxLat, maxLon
+
+    # Looping over all of the desired cluster files
+
+    for filename in fileList :
+        (pathname, nameStem) = os.path.split(filename)
+        (nameStem, nameExt) = os.path.splitext(nameStem)
+        fig = pyplot.figure()
+        ax = fig.gca()
+        MapUtils.PlotMapLayers(map, mapLayers, ax)
         
-    (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
+        (clustParams, clusters) = LoadClustFile(filename)
+        rastData = LoadRastRadar(os.sep.join([options.pathName, clustParams['dataSource']]))
+        rastData['vals'][rastData['vals'] < 0.0] = numpy.nan
 
-    ClusterMap(clusters,pylab.squeeze(rastData['vals']), sortedIndicies,#len(pylab.find(clustSizes >= (avgSize + 0.25*stdSize)))],
-	       radarBG_alpha=0.15, zorder = 1.0, axis=ax)
-    
-    if (not os.path.exists(os.sep.join(['PPI', options.runName]))) :
-        os.makedirs(os.sep.join(['PPI', options.runName]))
+        # Plotting the full reflectivity image, with significant transparency (alpha=0.25).
+        # This plot will get 'dimmed' by the later ClusterMap().
+        # zorder=1 so that it is above the Map Layers.
+    #    MakeReflectPPI(pylab.squeeze(rastData['vals']), rastData['lats'], rastData['lons'],
+    #		   alpha=0.15, axis=ax, zorder=1, titlestr=rastData['title'], colorbar=False, axis_labels=False)
+            
+        (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
-    outfile = os.sep.join(['PPI', options.runName, nameStem + '_clust.png'])
-    fig.savefig(outfile)
-    fig.clf()
-    del fig
+        ClusterMap(clusters,pylab.squeeze(rastData['vals']), sortedIndicies,#len(pylab.find(clustSizes >= (avgSize + 0.25*stdSize)))],
+               radarBG_alpha=0.15, zorder = 1.0, axis=ax)
+        
+        if (not os.path.exists(os.sep.join(['PPI', options.runName]))) :
+            os.makedirs(os.sep.join(['PPI', options.runName]))
+
+        outfile = os.sep.join(['PPI', options.runName, nameStem + '_clust.png'])
+        fig.savefig(outfile)
+        fig.clf()
+        del fig
 
 
 
