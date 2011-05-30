@@ -57,7 +57,9 @@ string GrabAttribute(const NcVar* dataVar, const int attIndex);
 bool OutputClusters(const string &filename, const vector<Cluster> &theClusters,
         	    const RadarData_t &radarInfo, const ClustParams_t &clustParam);
 
-RadarData_t ReadRadarFile(const string &filename);
+RadarData_t ReadRadarFile(const string &filename,
+                          const float latmin, const float latmax,
+                          const float lonmin, const float lonmax);
 
 
 void PrintHelp()
@@ -65,6 +67,7 @@ void PrintHelp()
 	cerr << "test_radar -i INPUT_FILE -o OUTPUT_FILE\n"
 	     << "           -u UPPER_SENSITIVITY -l LOWER_SENSITIVITY\n"
 	     << "           -p PADDING_LEVEL -r REACH -s SUBCLUST\n"
+             << "               [-x LAT_MIN] [-y LAT_MAX] [-m LON_MIN] [-n LON_MAX]\n"
 	     << "           [-h | --help]\n\n";
 }
 
@@ -77,6 +80,11 @@ int main(int argc, char* argv[])
 	clustParam.paddingLevel = NAN;
 	clustParam.reach = NAN;
 	clustParam.subClustDepth = 0;
+
+        float latmin = NAN;
+        float latmax = NAN;
+        float lonmin = NAN;
+        float lonmax = NAN;
 
 	string inputFilename = "";
 	string outputFilename = "";
@@ -94,11 +102,15 @@ int main(int argc, char* argv[])
 		{"padding", 1, NULL, 'p'},
 		{"reach", 1, NULL, 'r'},
 		{"subclust", 1, NULL, 's'},
+                {"latmin", 1, NULL, 'x'},
+                {"latmax", 1, NULL, 'y'},
+                {"lonmin", 1, NULL, 'm'},
+                {"latmin", 1, NULL, 'n'},
 		{"help", 0, NULL, 'h'},
 		{0, 0, 0, 0}
 	};
 
-	while ((OptionChar = getopt_long(argc, argv, "i:o:u:l:p:r:s:h", TheLongOptions, &OptionIndex)) != -1)
+	while ((OptionChar = getopt_long(argc, argv, "i:o:u:l:p:r:s:x:y:m:n:h", TheLongOptions, &OptionIndex)) != -1)
 	{
 		switch (OptionChar)
 		{
@@ -123,6 +135,18 @@ int main(int argc, char* argv[])
 		case 's':
 			clustParam.subClustDepth = atoi(optarg);
 			break;
+                case 'x':
+                        latmin = atof(optarg);
+                        break;
+                case 'y':
+                        latmax = atof(optarg);
+                        break;
+                case 'm':
+                        lonmin = atof(optarg);
+                        break;
+                case 'n':
+                        lonmax = atof(optarg);
+                        break;
 		case 'h':
 			PrintHelp();
 			return(1);
@@ -157,7 +181,7 @@ int main(int argc, char* argv[])
 		return(EXIT_FAILURE);
 	}
 
-	RadarData_t radarInfo = ReadRadarFile(inputFilename);
+	RadarData_t radarInfo = ReadRadarFile(inputFilename, latmin, latmax, lonmin, lonmax);
 
 	if (radarInfo.inputFilename.empty())
 	{
@@ -243,7 +267,43 @@ struct RadarData_t
 };
 */
 
-RadarData_t ReadRadarFile(const string &filename)
+long lower_bound(const double* vals, const float minVal, const long valCnt)
+{
+        if (!isnan(minVal))
+        {
+                long index = 0;
+                while (index < valCnt && vals[index] < minVal)
+                {
+                        index++;
+                }
+                return index;
+        }
+        else
+        {
+                return 0;
+        }
+}
+
+long upper_bound(const double* vals, const float maxVal, const long valCnt)
+{
+        if (!isnan(maxVal))
+        {
+                long index = valCnt - 1;
+                while (index > 0 && vals[index] > maxVal)
+                {
+                        index--;
+                }
+                return index;
+        }
+        else
+        {
+                return valCnt - 1;
+        }
+}
+
+RadarData_t ReadRadarFile(const string &filename,
+                          const float latmin, const float latmax,
+                          const float lonmin, const float lonmax)
 {
 	RadarData_t inputData;
 
@@ -258,6 +318,54 @@ RadarData_t ReadRadarFile(const string &filename)
 		return(inputData);
 	}
 
+	NcVar* latVar = radarFile.get_var("lat");
+
+	if (NULL == latVar)
+	{
+		cerr << "ERROR: invalid data file.  No variable called 'lat'!\n";
+		radarFile.close();
+		return(inputData);
+	}
+
+        long latCnt = latVar->num_vals();
+        double* latVals = new double[latCnt];
+	latVar->get(latVals, latCnt);
+	inputData.latUnits = GrabAttribute(latVar, 0);
+	inputData.latSpacing = strtod(GrabAttribute(latVar, 1).c_str(), NULL);
+
+        const long minLatIndex = lower_bound(latVals, latmin, latCnt);
+        const long maxLatIndex = upper_bound(latVals, latmax, latCnt);
+
+        delete latVals;
+        latCnt = (maxLatIndex - minLatIndex) + 1;
+        latVar->set_cur(minLatIndex);
+        inputData.latVals = new double[latCnt];
+        latVar->get(inputData.latVals, latCnt);
+
+
+	NcVar* lonVar = radarFile.get_var("lon");
+
+	if (NULL == lonVar)
+	{
+		cerr << "ERROR: invalid data file.  No variable called 'lon'!\n";
+		radarFile.close();
+		return(inputData);
+	}
+
+        long lonCnt = lonVar->num_vals();
+        double* lonVals = new double[lonCnt];
+        latVar->get(lonVals, lonCnt);
+        inputData.lonUnits = GrabAttribute(lonVar, 0);
+        inputData.lonSpacing = strtod(GrabAttribute(lonVar, 1).c_str(), NULL);
+
+        const long minLonIndex = lower_bound(lonVals, lonmin, lonCnt);
+        const long maxLonIndex = upper_bound(lonVals, lonmax, lonCnt);
+
+        delete lonVals;
+        lonCnt = (maxLonIndex - minLonIndex) + 1;
+        lonVar->set_cur(minLonIndex);
+        inputData.lonVals = new double[lonCnt];
+        lonVar->get(inputData.lonVals, lonCnt);
 
 	
 	NcVar* reflectVar = radarFile.get_var("value");
@@ -271,40 +379,15 @@ RadarData_t ReadRadarFile(const string &filename)
 		
 
 	inputData.dataEdges = reflectVar->edges();	// [0] - time, [1] - lat, [2] - lon
-	inputData.dataVals = new double[reflectVar->num_vals()];
+	inputData.dataEdges[1] = latCnt;
+	inputData.dataEdges[2] = lonCnt;
+	inputData.dataVals = new double[inputData.dataEdges[0] * inputData.dataEdges[1] * inputData.dataEdges[2]];
+	reflectVar->set_cur(0, minLatIndex, minLonIndex);
 	reflectVar->get(inputData.dataVals, inputData.dataEdges);
 
 	inputData.var_LongName = GrabAttribute(reflectVar, 0);
 	inputData.var_Units = "dBZ";//GrabAttribute(reflectVar, 1);
 
-	NcVar* latVar = radarFile.get_var("lat");
-
-	if (NULL == latVar)
-	{
-		cerr << "ERROR: invalid data file.  No variable called 'lat'!\n";
-		radarFile.close();
-		return(inputData);
-	}
-
-	inputData.latVals = new double[latVar->num_vals()];
-	latVar->get(inputData.latVals, latVar->num_vals());
-	inputData.latUnits = GrabAttribute(latVar, 0);
-	inputData.latSpacing = strtod(GrabAttribute(latVar, 1).c_str(), NULL);
-
-	NcVar* lonVar = radarFile.get_var("lon");
-
-	if (NULL == lonVar)
-	{
-		cerr << "ERROR: invalid data file.  No variable called 'lon'!\n";
-		radarFile.close();
-		return(inputData);
-	}
-
-	inputData.lonVals = new double[lonVar->num_vals()];
-	lonVar->get(inputData.lonVals, lonVar->num_vals());
-	inputData.lonUnits = GrabAttribute(lonVar, 0);
-	inputData.lonSpacing = strtod(GrabAttribute(lonVar, 1).c_str(), NULL);
-		
 
 	NcVar* timeVar = radarFile.get_var("time");
 	
