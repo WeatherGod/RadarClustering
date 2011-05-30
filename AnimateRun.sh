@@ -28,6 +28,7 @@ endif
 
 
 #convert `ls -1 PPI/$runName/*_clust.png | sort -d` -set delay 40 -set dispose none -loop 0 -layers optimize PPI/$runName/$runName.gif
-convert `ls -1 PPI/$runName/*_clust.png | sort -d` -set delay 40 -set dispose none -loop 0 PPI/$runName/$runName.gif
+#convert `ls -1 PPI/$runName/*_clust.png | sort -d` -set delay 40 -set dispose none -loop 0 PPI/$runName/$runName.gif
+mencoder mf://PPI/$runName/*.png -mf type=png:fps=4 -ovc lavc -lavcopts vcodec=mpeg4 -oac copy -o PPI/$runName/$runName.avi
 
 exit 0
