@@ -354,7 +354,7 @@ RadarData_t ReadRadarFile(const string &filename,
 
         long lonCnt = lonVar->num_vals();
         double* lonVals = new double[lonCnt];
-        latVar->get(lonVals, lonCnt);
+        lonVar->get(lonVals, lonCnt);
         inputData.lonUnits = GrabAttribute(lonVar, 0);
         inputData.lonSpacing = strtod(GrabAttribute(lonVar, 1).c_str(), NULL);
 
