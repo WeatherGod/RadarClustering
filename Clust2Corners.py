@@ -2,8 +2,7 @@
 import argparse         # for command-line parsing
 import glob				# for filename globbing
 import os.path
-import pylab			# for pylab.find(), pylab.squeeze()
-import numpy			# for numpy.unique(), numpy.array(), numpy.average()
+import numpy as np
 
 
 from ClusterFileUtils import LoadClustFile
@@ -47,45 +46,68 @@ for frameNum, filename in enumerate(fileList) :
     (clustParams, clusters) = LoadClustFile(filename)
 
     # Get rasterized reflectivity data
-    rastData = numpy.squeeze(LoadRastRadar(os.path.join(args.pathName, clustParams['dataSource']))['vals'])
+    rastData = np.squeeze(LoadRastRadar(os.path.join(args.pathName, clustParams['dataSource']))['vals'])
     # Get site info
     radarSite = radar.ByName(radarName, radar.Sites)[0]
     # Get cluster info
-    clustMembers = [pylab.find(clusters['clusterIndicies'] == clustIndx) for clustIndx in numpy.unique(clusters['clusterIndicies'])]
+    clustMembers = [np.nonzero(clusters['clusterIndicies'] == clustIndx) for
+                    clustIndx in np.unique(clusters['clusterIndicies'])]
 
     if startTime is None :
         startTime = clustParams['scantime']
 
     xCentroids = []
     yCentroids = []
+    sizeCentroids = []
     idCentroids = []
 
     # Now, we gotta merge this information...
     for aClust in clustMembers :
-        locs = numpy.array([[clusters['members_LatLoc'][goodIndx],
-                             clusters['members_LonLoc'][goodIndx]] for goodIndx in aClust])
-        clustVals = [rastData[latLoc, lonLoc] for latLoc, lonLoc in locs]
+        # produce a Nx2 array
+        locs = np.array([(clusters['members_LatLoc'][goodIndx],
+                          clusters['members_LonLoc'][goodIndx]) for goodIndx in aClust])
 
         # We have everything in Lat/Lon... we need to convert to cartesian
-        lats = clusters['latAxis'][locs[:, 0]]
-        lons = clusters['lonAxis'][locs[:, 1]]
+        gridLons, gridLats = np.meshgrid(clusters['lonAxis'], clusters['latAxis'])
 
-        dists = GreatCircleDist(radarSite['LON'], radarSite['LAT'], lons, lats)
-        bearings = Bearing(radarSite['LON'], radarSite['LAT'], lons, lats)
+        dists = GreatCircleDist(radarSite['LON'], radarSite['LAT'],
+                                gridLons, gridLats)
+        bearings = Bearing(radarSite['LON'], radarSite['LAT'],
+                           gridLons, gridLats)
 
-        xLocs = dists * numpy.sin(bearings) / 1000.0
-        yLocs = dists * numpy.cos(bearings) / 1000.0
+        gridx = dists * np.sin(bearings) / 1000.0
+        gridy = dists * np.cos(bearings) / 1000.0
 
-        # Now find the Center of Mass.
-        yCentroids.append(numpy.average(yLocs, weights=clustVals))
-        xCentroids.append(numpy.average(xLocs, weights=clustVals))
+        dxdj, dxdi = np.gradient(gridx)
+        dydj, dydi = np.gradient(gridy)
+
+        locIndices = zip(*locs)
+
+        yLocs = gridy[locIndices]
+        xLocs = gridx[locIndices]
+
+
+        # Find the Center of Mass.
+        clustVals = rastData[locIndices]
+        yCentroids.append(np.average(yLocs, weights=clustVals))
+        xCentroids.append(np.average(xLocs, weights=clustVals))
+
+        # Find the size of the feature.
+        # This method assumes that the voxels are rhombus-shaped.
+        # TODO: A better assumption would be parallelogram-shaped
+        a = np.sqrt(dxdj[locIndices]**2 + dydj[locIndices]**2)
+        b = np.sqrt(dxdi[locIndices]**2 + dydi[locIndices]**2)
+        dA = a * b
+        sizeCentroids.append(np.sum(dA))
+
+        # Supply this centroid's unique feature ID
         idCentroids.append(cornerID)
         cornerID += 1
 
     # Starting with initializing the volume object.
     aVol = {'volTime': (clustParams['scantime'] - startTime) / 60.0,
             'frameNum': frameNum,
-            'stormCells': numpy.array(zip(xCentroids, yCentroids, idCentroids),
+            'stormCells': np.array(zip(xCentroids, yCentroids, sizeCentroids, idCentroids),
                                       dtype=TrackUtils.corner_dtype)}
 
     # Then build up the volume info
