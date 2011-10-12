@@ -24,11 +24,13 @@ end
 
 if ($runName == "") then
    echo "ERROR: Missing runname option (-r)"
+   echo $Usage
    exit 1
 endif
 
 if ($#inputFilenames == 0) then
    echo "ERROR: No input file to process.  Run directories not made."
+   echo $Usage
    exit 1
 endif
 
