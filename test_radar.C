@@ -307,6 +307,9 @@ RadarData_t ReadRadarFile(const string &filename,
 {
 	RadarData_t inputData;
 
+	// Sets the internal netcdf error handling to nonfatal for this scope
+	NcError error_handler(NcError::verbose_nonfatal);
+
 	NcFile radarFile(filename.c_str());
 
 	if (!radarFile.is_valid())
@@ -367,8 +370,14 @@ RadarData_t ReadRadarFile(const string &filename,
         inputData.lonVals = new double[lonCnt];
         lonVar->get(inputData.lonVals, lonCnt);
 
-	
-	NcVar* reflectVar = radarFile.get_var("value");
+	NcVar* reflectVar = NULL;
+	reflectVar = radarFile.get_var("value");
+
+	if ( reflectVar == NULL )
+	{
+		// Try this variable name
+		reflectVar = radarFile.get_var("Reflectivity");
+	}
 
 	if (reflectVar == NULL)
 	{
