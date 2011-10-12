@@ -53,16 +53,21 @@ optionParams['NWRT'] = {'runName': 'Test_NWRT_TimeSeries',
                         'destDir': '../../Documents/SPA/'}
 
 for runName in options.runNames :
-    params = optionParams[runName]
+    params = optionParams.get(runName,
+                              {'runName': runName,
+                               'domain': (None, None, None, None),
+                               'destDir': os.path.join('.', 'PPI',
+                                            runName)})
     print "Curr RunName:", runName
 
-    fileList = glob.glob(os.sep.join([options.pathName, 'ClustInfo', params['runName'], '*.nc']))
+    fileList = glob.glob(os.path.join(options.pathName,
+                                      'ClustInfo',
+                                      params['runName'], '*.nc'))
     if (len(fileList) < 3) : print "WARNING: Not enough files found for run '" + runName + "'!"
     fileList.sort()
 
     if options.isTest :
         params['destDir'] = '.'
-
 
     (minLat, minLon, maxLat, maxLon) = params['domain']
 
@@ -70,11 +75,13 @@ for runName in options.runNames :
     mapLayers = MapUtils.mapLayers
 
     # Map domain
-    map = Basemap(projection='cyl', resolution='i', suppress_ticks=True,
-				    llcrnrlat = minLat, llcrnrlon = minLon,
-				    urcrnrlat = maxLat, urcrnrlon = maxLon)
+    map = Basemap(projection='cyl', resolution='i',
+                  suppress_ticks=True,
+                  llcrnrlat=minLat, llcrnrlon=minLon,
+                  urcrnrlat=maxLat, urcrnrlon=maxLon)
 
-    fig = pyplot.figure(figsize=(9.65, 3.0))   # should be good for 1x3 grid
+    # should be good for 1x3 grid
+    fig = pyplot.figure(figsize=(9.65, 3.0))
     grid = AxesGrid(fig, 111,
 		    nrows_ncols=(1, 3),
 		    axes_pad=0.22,
@@ -83,34 +90,36 @@ for runName in options.runNames :
 
     
     # Looping over all of the desired cluster files
-    for figIndex, filename in enumerate(fileList[0:3]):
+    for figIndex, filename in enumerate(fileList[:3]):
         pathname, nameStem = os.path.split(filename)
         ax = grid[figIndex]
 
         MapUtils.PlotMapLayers(map, mapLayers, axis=ax)
-    
-    
+
+
         (clustParams, clusters) = LoadClustFile(filename)
-        rastData = LoadRastRadar(os.sep.join([options.pathName, clustParams['dataSource']]))
+        rastData = LoadRastRadar(os.path.join(options.pathName,
+                                        clustParams['dataSource']))
         rastData['vals'][rastData['vals'] < 0.0] = numpy.nan
 
         (clustCnt, clustSizes, sortedIndicies) = GetClusterSizeInfo(clusters)
 
-        ClusterMap(clusters, numpy.squeeze(rastData['vals']), sortedIndicies,
-                   radarBG_alpha=0.10, dimmerBox_alpha=0.20,
-	           rasterized=True,
-                   zorder = 1.0, axis=ax)
+        ClusterMap(clusters, numpy.squeeze(rastData['vals']),
+                   sortedIndicies, radarBG_alpha=0.10,
+                   dimmerBox_alpha=0.20, rasterized=True,
+                   zorder=1.0, axis=ax)
     
-        ax.set_title(datetime.datetime.utcfromtimestamp(rastData['scan_time']).strftime('%Y/%m/%d  %H:%M:%S'))
-    	# Neat trick to have only the outer parts of the subplots get axis labels...
-        #ax.label_outer()
+        ax.set_title(datetime.datetime.utcfromtimestamp(
+            rastData['scan_time']).strftime('%Y/%m/%d  %H:%M:%S'))
 
     MakeReflectColorbar(grid.cbar_axes[0])
     print "Saving..."
-    fig.savefig('%s%s%s_TimeSeries.%s' % (params['destDir'], os.sep, runName, options.outputFormat),
-		dpi=125, bbox_inches='tight')
+    fig.savefig('%s%s%s_TimeSeries.%s' % (params['destDir'],
+                         os.sep, runName, options.outputFormat),
+                dpi=125, bbox_inches='tight')
 
-    # Need to make sure that memory usage doesn't go out of control...
+    # Need to make sure that memory usage doesn't
+    # go out of control...
     fig.clf()
     del fig
 
