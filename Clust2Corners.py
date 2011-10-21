@@ -6,12 +6,10 @@ import numpy as np
 
 
 from ClusterFileUtils import LoadClustFile
-from LoadRastRadar import LoadRastRadar
-from RadarRastify import GreatCircleDist, Bearing
+from BRadar.io import LoadRastRadar
+from BRadar.maputils import LonLat2Cart
 import radarsites as radar
 
-#import sys	
-#sys.path.append("../Tracking/")
 import ZigZag.TrackFileUtils as TrackFileUtils
 import ZigZag.TrackUtils as TrackUtils
 import ZigZag.ParamUtils as ParamUtils
@@ -35,9 +33,6 @@ if (len(fileList) == 0) : print "WARNING: No files found for run '" + args.runNa
 fileList.sort()
 
 
-# TODO: Temporary!!
-radarName = "PAR"
-
 volume_data = []
 cornerID = 0
 startTime = None
@@ -46,7 +41,13 @@ for frameNum, filename in enumerate(fileList) :
     (clustParams, clusters) = LoadClustFile(filename)
 
     # Get rasterized reflectivity data
-    rastData = np.squeeze(LoadRastRadar(os.path.join(args.pathName, clustParams['dataSource']))['vals'])
+    radData = LoadRastRadar(os.path.join(args.pathName,
+                                         clustParams['dataSource']))
+    radarName = radData['station']
+    if radarName == 'NWRT' :
+        radarName = 'PAR'
+
+    rastData = np.squeeze(radData['vals'])
     # Get site info
     radarSite = radar.ByName(radarName, radar.Sites)[0]
     # Get cluster info
@@ -69,14 +70,8 @@ for frameNum, filename in enumerate(fileList) :
 
         # We have everything in Lat/Lon... we need to convert to cartesian
         gridLons, gridLats = np.meshgrid(clusters['lonAxis'], clusters['latAxis'])
-
-        dists = GreatCircleDist(radarSite['LON'], radarSite['LAT'],
-                                gridLons, gridLats)
-        bearings = Bearing(radarSite['LON'], radarSite['LAT'],
-                           gridLons, gridLats)
-
-        gridx = dists * np.sin(bearings) / 1000.0
-        gridy = dists * np.cos(bearings) / 1000.0
+        gridx, gridy = LonLat2Cart(radarSite['LON'], radarSite['LAT'],
+                                   gridLons, gridLats)
 
         dxdj, dxdi = np.gradient(gridx)
         dydj, dydi = np.gradient(gridy)

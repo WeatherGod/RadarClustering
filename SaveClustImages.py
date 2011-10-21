@@ -102,9 +102,15 @@ if __name__ == '__main__' :
 
     # Looping over all of the desired cluster files
 
+    ppiPath = os.path.join('PPI', options.runName)
     for filename in fileList :
         (pathname, nameStem) = os.path.split(filename)
         (nameStem, nameExt) = os.path.splitext(nameStem)
+        outfile = os.path.join(ppiPath, nameStem + '_clust.png')
+
+        if os.path.exists(outfile) :
+            continue
+
         fig = plt.figure()
         grid = AxesGrid(fig, 111,
             nrows_ncols=(1, 1),
@@ -140,12 +146,9 @@ if __name__ == '__main__' :
 
         MakeReflectColorbar(grid.cbar_axes[0])
 
-
-        ppiPath = os.path.join('PPI', options.runName)
         if not os.path.exists(ppiPath) :
             os.makedirs(ppiPath)
 
-        outfile = os.path.join(ppiPath, nameStem + '_clust.png')
         fig.savefig(outfile)
         fig.clf()
         del fig

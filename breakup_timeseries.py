@@ -17,9 +17,9 @@ if __name__ == '__main__' :
     import os.path
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("dir", nargs=1,
+    parser.add_argument("dir",
                         help="Directory containing the timeseries of radar data")
-    parser.add_argument("threshold", nargs=1, type=int,
+    parser.add_argument("threshold", type=int,
                         help="Threshold number of seconds to allow between frames")
 
     args = parser.parse_args()
