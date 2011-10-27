@@ -137,6 +137,7 @@ if __name__ == '__main__' :
 
             # Find the Center of Mass.
             clustVals = rastData[locIndices]
+            clustVals -= clustVals.min()
             yCentroids.append(np.average(yLocs, weights=clustVals))
             xCentroids.append(np.average(xLocs, weights=clustVals))
 
