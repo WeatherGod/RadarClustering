@@ -43,6 +43,9 @@ if __name__ == '__main__' :
     parser.add_argument("-c", "--contours", dest='savePolys',
                         help="Save polygons in a pickle called polygons.foo",
                         action='store_true', default=False)
+    parser.add_argument("-t", "--threshold", dest="sizeThresh", type=float,
+                        help="Size threshold for clusters converted to corners",
+                        metavar="THRESH", default=-0.0)
 
 
     args = parser.parse_args()
@@ -112,6 +115,34 @@ if __name__ == '__main__' :
                               clusters['members_LonLoc'][goodIndx]) for
                              goodIndx in aClust])
 
+
+
+            locIndices = zip(*locs)
+
+            # Find the size of the feature.
+            # This method assumes that the voxels are rhombus-shaped.
+            # TODO: A better assumption would be parallelogram-shaped
+            a = np.hypot(dxdj[locIndices], dydj[locIndices])
+            b = np.hypot(dxdi[locIndices], dydi[locIndices])
+            dA = a * b
+            area = np.sum(dA)
+
+            if area < args.sizeThresh :
+                # Don't bother saving this one... too small
+                continue
+
+            yLocs = gridy[locIndices]
+            xLocs = gridx[locIndices]
+
+
+            # Find the Center of Mass.
+            clustVals = rastData[locIndices]
+            yCentroids.append(np.average(yLocs, weights=clustVals))
+            xCentroids.append(np.average(xLocs, weights=clustVals))
+
+            sizeCentroids.append(area)
+            idCentroids.append(cornerID)
+
             if args.savePolys :
                 # Reset the mask
                 clustMask.fill(False)
@@ -124,27 +155,7 @@ if __name__ == '__main__' :
 
 
 
-            locIndices = zip(*locs)
 
-            yLocs = gridy[locIndices]
-            xLocs = gridx[locIndices]
-
-
-            # Find the Center of Mass.
-            clustVals = rastData[locIndices]
-            yCentroids.append(np.average(yLocs, weights=clustVals))
-            xCentroids.append(np.average(xLocs, weights=clustVals))
-
-            # Find the size of the feature.
-            # This method assumes that the voxels are rhombus-shaped.
-            # TODO: A better assumption would be parallelogram-shaped
-            a = np.hypot(dxdj[locIndices], dydj[locIndices])
-            b = np.hypot(dxdi[locIndices], dydi[locIndices])
-            dA = a * b
-            sizeCentroids.append(np.sum(dA))
-
-            # Supply this centroid's unique feature ID
-            idCentroids.append(cornerID)
             cornerID += 1
 
         # Starting with initializing the volume object.
