@@ -208,7 +208,10 @@ int main(int argc, char* argv[])
 	{
 		for (size_t xIndex = 0; xIndex < radarInfo.dataEdges[2]; xIndex++, dataIndex++)
 		{
-			if (isfinite(radarInfo.dataVals[dataIndex]))
+			// This should eliminate any magic number and
+			// error code values.
+			if (isfinite(radarInfo.dataVals[dataIndex]) &&
+			    radarInfo.dataVals[dataIndex] > -75)
 			{
 				xLocs.push_back(xIndex);
 				yLocs.push_back(yIndex);
