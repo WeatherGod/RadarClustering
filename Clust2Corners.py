@@ -14,10 +14,16 @@ import ZigZag.TrackFileUtils as TrackFileUtils
 import ZigZag.TrackUtils as TrackUtils
 import ZigZag.ParamUtils as ParamUtils
 
+from scipy.ndimage import binary_closing, generate_binary_structure
 
-def _get_contour(xs, ys, feature) :
+
+
+def _get_contour(xs, ys, feature, struct=None) :
+
     from matplotlib._cntr import Cntr
     from itertools import chain
+
+    feature = binary_closing(feature, structure=struct)
     c = Cntr(xs, ys, feature, None)
     # Returns a list where the first half of the elements are the boundaries
     # The second half contain connection codes that can be ignored here.
@@ -97,6 +103,8 @@ if __name__ == '__main__' :
 
         # For the polygons
         clustMask = np.empty(rastData.shape, dtype=bool)
+        binStruct = generate_binary_structure(clustMask.ndim,
+                                              int(round(clustParams['reach'])))
 
         # We have everything in Lat/Lon... we need to convert to cartesian
         gridLons, gridLats = np.meshgrid(clusters['lonAxis'],
@@ -151,7 +159,7 @@ if __name__ == '__main__' :
                 clustMask[clusters['members_LatLoc'][aClust],
                           clusters['members_LonLoc'][aClust]] = True
 
-                verts = _get_contour(gridx, gridy, clustMask)
+                verts = _get_contour(gridx, gridy, clustMask, binStruct)
                 polygons[cornerID] = verts
 
 
