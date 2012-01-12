@@ -75,6 +75,7 @@ if __name__ == '__main__' :
     volume_data = []
     cornerID = 0
     startTime = None
+    times = []
 
     for frameNum, filename in enumerate(fileList) :
         (clustParams, clusters) = LoadClustFile(filename)
@@ -167,8 +168,10 @@ if __name__ == '__main__' :
 
             cornerID += 1
 
+        currtime = (clustParams['scantime'] - startTime) / 60.0
+        times.append(currtime)
         # Starting with initializing the volume object.
-        aVol = {'volTime': (clustParams['scantime'] - startTime) / 60.0,
+        aVol = {'volTime': currtime,
                 'frameNum': frameNum,
                 'stormCells': np.array(zip(xCentroids, yCentroids,
                                            sizeCentroids, idCentroids),
@@ -190,6 +193,7 @@ if __name__ == '__main__' :
         simParams['yLims'] = yLims
         simParams['tLims'] = tLims
         simParams['frameCnt'] = len(volume_data)
+        simParams['times'] = times
 
         # These parameters are irrelevant.
         simParams.pop('seed')
